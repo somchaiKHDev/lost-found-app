@@ -20,12 +20,13 @@ export const TextField: React.FC<TextFieldProps> = ({
   placeholder = "",
   rows = 4,
   description,
-  ...field
+  ...props
 }) => {
   const { control } = useFormContext();
   const {
+    field,
     fieldState: { error },
-  } = useController({ ...field, control });
+  } = useController({ ...props, control });
 
   return (
     <FormItem>
@@ -35,6 +36,7 @@ export const TextField: React.FC<TextFieldProps> = ({
           {...field}
           id="outlined-flexible"
           size="small"
+          value={field.value || ""}
           error={!!error}
           sx={{
             "& .MuiOutlinedInput-root": {
@@ -44,6 +46,7 @@ export const TextField: React.FC<TextFieldProps> = ({
               },
             },
           }}
+          autoComplete="off"
         />
       </FormControl>
       {description && <FormDescription>{description}</FormDescription>}

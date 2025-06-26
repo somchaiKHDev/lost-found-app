@@ -5,18 +5,39 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import MuiButton from "@mui/material/Button";
 import { TextFieldArea } from "../components/forms/TextFieldArea";
+import { TextField } from "../components/forms/TextField";
+import { Autocomplete } from "../components/forms/Autocomplete";
+import { MuiDateTimeField } from "../components/forms/DateTimeField";
+import moment from "moment";
 
 const FormSchema = z.object({
+  item_type: z.any(),
   description: z.string().min(1, {
     message: "จำเป็นต้องกรอกข้อมูล",
   }),
+  location_found: z.string().min(1, {
+    message: "จำเป็นต้องกรอกข้อมูล",
+  }),
+  found_date_time: z
+    .any()
+    .transform((val) => {
+      if (moment.isMoment(val)) return val.toDate();
+      const m = moment(val);
+      return m.isValid() ? m.toDate() : undefined;
+    })
+    .refine((val) => val instanceof Date && !isNaN(val.getTime()), {
+      message: "กรุณาเลือกวันและเวลาให้ถูกต้อง",
+    }),
+  found_by: z.any(),
+  note: z.any(),
 });
 
 const AddFoundItem = () => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      description: "",
+      item_type: null,
+      found_date_time: new Date(),
     },
   });
 
@@ -64,11 +85,68 @@ const AddFoundItem = () => {
           <div className="grow flex flex-col gap-2">
             <FormField
               control={form.control}
+              name="item_type"
+              render={({ field }) => (
+                <Autocomplete
+                  label="ประเภทสิ่งของ"
+                  options={[
+                    { label: "The Godfather", value: "The Godfather" },
+                    { label: "Pulp Fiction", value: "Pulp Fiction" },
+                  ]}
+                  {...field}
+                />
+              )}
+            />
+            <FormField
+              control={form.control}
               name="description"
-              render={({ field }) => <TextFieldArea label="รายละเอียด" {...field} />}
+              render={({ field }) => (
+                <TextFieldArea label="รายละเอียด" rows={4} {...field} />
+              )}
             />
           </div>
         </div>
+        <div className="flex gap-4">
+          <div className="w-1/2">
+            <FormField
+              control={form.control}
+              name="location_found"
+              render={({ field }) => (
+                <TextField label="สถานที่พบเจอ" {...field} />
+              )}
+            />
+          </div>
+          <div className="w-1/2">
+            <FormField
+              control={form.control}
+              name="found_date_time"
+              render={({ field }) => (
+                <MuiDateTimeField label="วัน/เวลาที่พบ" {...field} />
+              )}
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="w-1/2">
+            <FormField
+              control={form.control}
+              name="found_by"
+              render={({ field }) => (
+                <TextField label="ผู้พบ (ถ้ามี)" {...field} />
+              )}
+            />
+          </div>
+          <div className="w-1/2">
+            <FormField
+              control={form.control}
+              name="note"
+              render={({ field }) => (
+                <TextField label="หมายเหตุเพิ่มเติม" {...field} />
+              )}
+            />
+          </div>
+        </div>
+
         <MuiButton type="submit" variant="contained">
           บันทึก
         </MuiButton>
