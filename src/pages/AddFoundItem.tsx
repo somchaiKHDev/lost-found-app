@@ -1,18 +1,10 @@
 import { PhotoIcon } from "@heroicons/react/24/solid";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button"
+import { Form, FormField } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { TextInput } from "../components/forms/TextInput";
 
 const FormSchema = z.object({
   username: z.string().min(2, {
@@ -73,18 +65,7 @@ const AddFoundItem = () => {
             <FormField
               control={form.control}
               name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input placeholder="shadcn" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    This is your public display name.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => <TextInput {...field} />}
             />
           </div>
 
