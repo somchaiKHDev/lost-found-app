@@ -1,14 +1,14 @@
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { Form, FormField } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { TextInput } from "../components/forms/TextInput";
+import MuiButton from "@mui/material/Button";
+import { TextFieldArea } from "../components/forms/TextFieldArea";
 
 const FormSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  description: z.string().min(1, {
+    message: "จำเป็นต้องกรอกข้อมูล",
   }),
 });
 
@@ -16,7 +16,7 @@ const AddFoundItem = () => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: "",
+      description: "",
     },
   });
 
@@ -61,16 +61,17 @@ const AddFoundItem = () => {
               </div>
             </div>
           </div>
-          <div className="grow">
+          <div className="grow flex flex-col gap-2">
             <FormField
               control={form.control}
-              name="username"
-              render={({ field }) => <TextInput {...field} />}
+              name="description"
+              render={({ field }) => <TextFieldArea label="รายละเอียด" {...field} />}
             />
           </div>
-
-          <Button type="submit">Submit</Button>
         </div>
+        <MuiButton type="submit" variant="contained">
+          บันทึก
+        </MuiButton>
       </form>
     </Form>
   );
