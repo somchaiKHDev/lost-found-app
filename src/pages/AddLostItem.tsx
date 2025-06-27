@@ -1,7 +1,7 @@
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import MuiButton from "@mui/material/Button";
+import Button from "@mui/material/Button";
 import { TextFieldArea } from "../components/forms/TextFieldArea";
 import { TextField } from "../components/forms/TextField";
 import { Autocomplete } from "../components/forms/Autocomplete";
@@ -57,8 +57,11 @@ const AddLostItem = () => {
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="w-full mb-4">
+        <div className="flex justify-between mb-4">
           <span className="text-2xl font-medium">เพิ่มรายการของที่พบ</span>
+          <Button type="submit" variant="contained">
+            บันทึก
+          </Button>
         </div>
         <div className="flex gap-4">
           <div className="w-1/2">
@@ -152,10 +155,6 @@ const AddLostItem = () => {
             />
           </div>
         </div>
-
-        <MuiButton type="submit" variant="contained">
-          บันทึก
-        </MuiButton>
       </form>
     </FormProvider>
   );

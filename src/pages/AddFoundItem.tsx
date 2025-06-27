@@ -55,8 +55,11 @@ const AddFoundItem = () => {
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="w-full mb-4">
+        <div className="flex justify-between mb-4">
           <span className="text-2xl font-medium">เพิ่มรายการของที่พบ</span>
+          <Button type="submit" variant="contained">
+            บันทึก
+          </Button>
         </div>
         <div className="flex flex-wrap gap-4 w-full">
           <div className="grow-0 xs:grow min-w-3xs">
@@ -146,10 +149,6 @@ const AddFoundItem = () => {
             />
           </div>
         </div>
-
-        <Button type="submit" variant="contained">
-          บันทึก
-        </Button>
       </form>
     </FormProvider>
   );
