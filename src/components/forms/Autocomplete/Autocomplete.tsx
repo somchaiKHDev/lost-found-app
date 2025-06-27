@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import MuiAutocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { useFormContext, useController } from "react-hook-form";
@@ -17,13 +17,19 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
   description,
   options,
 }) => {
-  const { control } = useFormContext();
+  const { control, setValue } = useFormContext();
   const {
     field: { value, onChange, ref },
     fieldState: { error },
   } = useController({ name, control });
 
   const currentValue = options.find((opt) => opt.label === value) || null;
+
+  useEffect(() => {
+    if (currentValue === null && options.length > 0) {
+      setValue(name, "");
+    }
+  }, [currentValue, options, name, setValue]);
 
   return (
     <div className="flex flex-col">
