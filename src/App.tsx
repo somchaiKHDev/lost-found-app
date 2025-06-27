@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Layout from "./pages/Layout";
 import AddFoundItem from "./pages/AddFoundItem";
+import AddLostItem from "./pages/AddLostItem";
 
 const App = () => {
   return (
@@ -11,7 +12,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/add-found-item" element={<AddFoundItem />} />
-          <Route path="/add-lost-item" element={<Home />} />
+          <Route path="/add-lost-item" element={<AddLostItem />} />
         </Routes>
       </Layout>
     </BrowserRouter>

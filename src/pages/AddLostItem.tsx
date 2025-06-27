@@ -7,22 +7,24 @@ import { TextField } from "../components/forms/TextField";
 import { Autocomplete } from "../components/forms/Autocomplete";
 import { MuiDateTimeField } from "../components/forms/DateTimeField";
 import moment from "moment";
-import { FileUpload } from "../components/forms/FileUpload";
 
 const FormSchema = z.object({
-  file_upload: z
-    .array(z.union([z.instanceof(File), z.string()]))
-    .min(1, "กรุณาเลือกรูปภาพประกอบ"),
+  fullname: z.string().min(1, {
+    message: "จำเป็นต้องกรอกข้อมูล",
+  }),
+  contact_phone: z.string().min(1, {
+    message: "จำเป็นต้องกรอกข้อมูล",
+  }),
   item_type: z.string().min(1, {
     message: "กรุณาเลือกประเภทสิ่งของ",
   }),
   description: z.string().min(1, {
     message: "จำเป็นต้องกรอกข้อมูล",
   }),
-  location_found: z.string().min(1, {
+  location: z.string().min(1, {
     message: "จำเป็นต้องกรอกข้อมูล",
   }),
-  found_date_time: z
+  date_lost: z
     .any()
     .transform((val) => {
       if (moment.isMoment(val)) return val.toDate();
@@ -32,19 +34,19 @@ const FormSchema = z.object({
     .refine((val) => val instanceof Date && !isNaN(val.getTime()), {
       message: "กรุณาเลือกวันและเวลาให้ถูกต้อง",
     }),
-  found_by: z.any(),
   note: z.any(),
 });
 
-const AddFoundItem = () => {
+const AddLostItem = () => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      file_upload: [],
+      fullname: "",
+      contact_phone: "",
       item_type: "",
       description: "",
-      location_found: "",
-      found_date_time: new Date(),
+      location: "",
+      date_lost: new Date(),
     },
   });
 
@@ -58,17 +60,48 @@ const AddFoundItem = () => {
         <div className="w-full mb-4">
           <span className="text-2xl font-medium">เพิ่มรายการของที่พบ</span>
         </div>
-        <div className="flex flex-wrap gap-4 w-full">
-          <div className="grow-0 xs:grow min-w-3xs">
-            <div className="col-span-full">
-              <Controller
-                control={form.control}
-                name="file_upload"
-                render={({ field }) => <FileUpload {...field} />}
-              />
-            </div>
+        <div className="flex gap-4">
+          <div className="w-1/2">
+            <Controller
+              control={form.control}
+              name="fullname"
+              render={({ field }) => (
+                <TextField label="ชื่อผู้แจ้ง" {...field} />
+              )}
+            />
           </div>
-          <div className="grow flex flex-col gap-2">
+          <div className="w-1/2">
+            <Controller
+              control={form.control}
+              name="contact_phone"
+              render={({ field }) => (
+                <TextField label="เบอร์ติดต่อ" {...field} />
+              )}
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="w-full">
+            <Controller
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <TextFieldArea label="รายละเอียดสิ่งของ" rows={4} {...field} />
+              )}
+            />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="w-1/2">
+            <Controller
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <TextField label="สถานที่ที่หาย" {...field} />
+              )}
+            />
+          </div>
+          <div className="w-1/2">
             <Controller
               control={form.control}
               name="item_type"
@@ -97,42 +130,15 @@ const AddFoundItem = () => {
                 />
               )}
             />
-            <Controller
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <TextFieldArea label="รายละเอียด" rows={3} {...field} />
-              )}
-            />
           </div>
         </div>
         <div className="flex gap-4">
           <div className="w-1/2">
             <Controller
               control={form.control}
-              name="location_found"
+              name="date_lost"
               render={({ field }) => (
-                <TextField label="สถานที่พบเจอ" {...field} />
-              )}
-            />
-          </div>
-          <div className="w-1/2">
-            <Controller
-              control={form.control}
-              name="found_date_time"
-              render={({ field }) => (
-                <MuiDateTimeField label="วัน/เวลาที่พบ" {...field} />
-              )}
-            />
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="w-1/2">
-            <Controller
-              control={form.control}
-              name="found_by"
-              render={({ field }) => (
-                <TextField label="ผู้พบ (ถ้ามี)" {...field} />
+                <MuiDateTimeField label="วัน/เวลาที่หาย" {...field} />
               )}
             />
           </div>
@@ -155,4 +161,4 @@ const AddFoundItem = () => {
   );
 };
 
-export default AddFoundItem;
+export default AddLostItem;
