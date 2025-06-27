@@ -23,7 +23,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
     fieldState: { error },
   } = useController({ name, control });
 
-  const currentValue = options.find((opt) => opt.value === value) || null;
+  const currentValue = options.find((opt) => opt.label === value) || null;
 
   return (
     <div className="flex flex-col">
@@ -43,13 +43,14 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
         getOptionLabel={(option) => option.label}
         value={currentValue}
         onChange={(_, newValue) => {
-          onChange(newValue?.value ?? "");
+          onChange(newValue?.label ?? null);
         }}
         size="small"
         renderInput={(params: any) => (
           <TextField {...params} inputRef={ref} error={!!error} />
         )}
         isOptionEqualToValue={(option, val) => option.value === val.value}
+        noOptionsText="ไม่พบตัวเลือก"
       />
 
       {description && (
