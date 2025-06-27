@@ -8,11 +8,13 @@ import moment from "moment";
 interface TextFieldProps extends ControllerRenderProps {
   name: string;
   label?: string;
+  placeholder?: string;
   description?: string;
 }
 export const MuiDateTimeField: React.FC<TextFieldProps> = ({
   name,
-  label = "Label",
+  label,
+  placeholder,
   description,
 }) => {
   const { control } = useFormContext();
@@ -45,6 +47,7 @@ export const MuiDateTimeField: React.FC<TextFieldProps> = ({
               size: "small",
               error: !!error,
               helperText: error?.message,
+              placeholder,
             },
           }}
           sx={{

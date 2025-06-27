@@ -8,12 +8,14 @@ type Option = { label: string; value: string };
 interface AutocompleteProps {
   name: string;
   label?: string;
+  placeholder?: string;
   description?: string;
   options: Option[];
 }
 export const Autocomplete: React.FC<AutocompleteProps> = ({
   name,
-  label = "Label",
+  label,
+  placeholder,
   description,
   options,
 }) => {
@@ -53,7 +55,12 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
         }}
         size="small"
         renderInput={(params: any) => (
-          <TextField {...params} inputRef={ref} error={!!error} />
+          <TextField
+            {...params}
+            inputRef={ref}
+            error={!!error}
+            placeholder={placeholder}
+          />
         )}
         isOptionEqualToValue={(option, val) => option.value === val.value}
         noOptionsText="ไม่พบตัวเลือก"

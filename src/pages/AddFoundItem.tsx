@@ -1,7 +1,7 @@
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import MuiButton from "@mui/material/Button";
+import Button from "@mui/material/Button";
 import { TextFieldArea } from "../components/forms/TextFieldArea";
 import { TextField } from "../components/forms/TextField";
 import { Autocomplete } from "../components/forms/Autocomplete";
@@ -147,9 +147,9 @@ const AddFoundItem = () => {
           </div>
         </div>
 
-        <MuiButton type="submit" variant="contained">
+        <Button type="submit" variant="contained">
           บันทึก
-        </MuiButton>
+        </Button>
       </form>
     </FormProvider>
   );

@@ -6,12 +6,11 @@ interface TextFieldProps extends ControllerRenderProps {
   name: string;
   label?: string;
   placeholder?: string;
-  rows?: number;
   description?: string;
 }
 export const TextField: React.FC<TextFieldProps> = ({
   name,
-  label = "Label",
+  label,
   placeholder = "",
   description,
 }) => {
