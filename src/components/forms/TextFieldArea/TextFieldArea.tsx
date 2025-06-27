@@ -51,7 +51,7 @@ export const TextFieldArea: React.FC<TextAreaProps> = ({
         />
       </FormControl>
       {description && <FormDescription>{description}</FormDescription>}
-      <FormMessage />
+      <FormMessage>{error?.message}</FormMessage>
     </FormItem>
   );
 };
