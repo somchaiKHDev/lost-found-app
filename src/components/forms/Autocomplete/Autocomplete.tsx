@@ -1,67 +1,61 @@
 import React from "react";
-import type { ControllerRenderProps } from "react-hook-form";
 import MuiAutocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import {
-  FormControl,
-  FormDescription,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { useFormContext, useController } from "react-hook-form";
 
 type Option = { label: string; value: string };
 
-interface TextAreaProps extends ControllerRenderProps {
+interface AutocompleteProps {
+  name: string;
   label?: string;
-  placeholder?: string;
-  rows?: number;
   description?: string;
   options: Option[];
 }
-export const Autocomplete: React.FC<TextAreaProps> = ({
+export const Autocomplete: React.FC<AutocompleteProps> = ({
+  name,
   label = "Label",
-  placeholder = "",
-  rows = 4,
   description,
   options,
-  ...props
 }) => {
   const { control } = useFormContext();
   const {
-    field: { onChange, value, ref },
+    field: { value, onChange, ref },
     fieldState: { error },
-  } = useController({ ...props, control });
+  } = useController({ name, control });
 
   const currentValue = options.find((opt) => opt.value === value) || null;
 
   return (
-    <FormItem>
-      {label && <FormLabel>{label}</FormLabel>}
-      <FormControl>
-        <MuiAutocomplete
-          options={options}
-          getOptionLabel={(option) => option.label}
-          value={currentValue}
-          onChange={(_, newValue) => {
-            onChange(newValue?.value ?? "");
-          }}
-          size="small"
-          renderInput={(params: any) => (
-            <TextField
-              {...params}
-              inputRef={ref}
-              label={label}
-              error={!!error}
-              helperText={error?.message}
-            />
-          )}
-          isOptionEqualToValue={(option, val) => option.value === val.value}
-        />
-      </FormControl>
-      {description && <FormDescription>{description}</FormDescription>}
-      <FormMessage />
-    </FormItem>
+    <div className="flex flex-col">
+      {label && (
+        <label
+          htmlFor={name}
+          className={`block mb-1 font-medium ${
+            error ? "text-red-600" : "text-gray-700"
+          }`}
+        >
+          {label}
+        </label>
+      )}
+
+      <MuiAutocomplete
+        options={options}
+        getOptionLabel={(option) => option.label}
+        value={currentValue}
+        onChange={(_, newValue) => {
+          onChange(newValue?.value ?? "");
+        }}
+        size="small"
+        renderInput={(params: any) => (
+          <TextField {...params} inputRef={ref} error={!!error} />
+        )}
+        isOptionEqualToValue={(option, val) => option.value === val.value}
+      />
+
+      {description && (
+        <p className="mt-1 text-sm text-gray-500">{description}</p>
+      )}
+      {error && <p className="text-sm text-red-600">{error.message}</p>}
+    </div>
   );
 };

@@ -1,6 +1,5 @@
 import { PhotoIcon } from "@heroicons/react/24/solid";
-import { Form, FormField, FormMessage } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import MuiButton from "@mui/material/Button";
@@ -12,7 +11,17 @@ import moment from "moment";
 
 const FormSchema = z.object({
   file_upload: z.instanceof(File, { message: "กรุณาอัปโหลดไฟล์" }),
-  item_type: z.any(),
+  item_type: z
+    .object(
+      {
+        label: z.string(),
+        value: z.string(),
+      },
+      { required_error: "กรุณาเลือกประเภทสิ่งของ" }
+    )
+    .refine((val) => val.label && val.value, {
+      message: "กรุณาเลือกประเภทสิ่งของ",
+    }),
   description: z.string().min(1, {
     message: "จำเป็นต้องกรอกข้อมูล",
   }),
@@ -38,7 +47,9 @@ const AddFoundItem = () => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       file_upload: undefined,
-      item_type: null,
+      item_type: undefined,
+      description: "",
+      location_found: "",
       found_date_time: new Date(),
     },
   });
@@ -48,7 +59,7 @@ const AddFoundItem = () => {
   }
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="w-full mb-4">
           <span className="text-2xl font-medium">เพิ่มรายการของที่พบ</span>
@@ -56,10 +67,10 @@ const AddFoundItem = () => {
         <div className="flex flex-wrap gap-4 w-full">
           <div className="grow-0 xs:grow">
             <div className="col-span-full">
-              <FormField
+              <Controller
                 control={form.control}
                 name="file_upload"
-                render={({ field: { onChange } }) => (
+                render={({ field: { onChange }, fieldState }) => (
                   <>
                     <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                       <div className="text-center">
@@ -92,14 +103,18 @@ const AddFoundItem = () => {
                         </p>
                       </div>
                     </div>
-                    <FormMessage />
+                    {fieldState.error && (
+                      <p className="text-sm text-red-600">
+                        {fieldState.error.message}
+                      </p>
+                    )}
                   </>
                 )}
               />
             </div>
           </div>
           <div className="grow flex flex-col gap-2">
-            <FormField
+            <Controller
               control={form.control}
               name="item_type"
               render={({ field }) => (
@@ -113,18 +128,18 @@ const AddFoundItem = () => {
                 />
               )}
             />
-            <FormField
+            <Controller
               control={form.control}
               name="description"
               render={({ field }) => (
-                <TextFieldArea label="รายละเอียด" rows={4} {...field} />
+                <TextFieldArea label="รายละเอียด" rows={3} {...field} />
               )}
             />
           </div>
         </div>
         <div className="flex gap-4">
           <div className="w-1/2">
-            <FormField
+            <Controller
               control={form.control}
               name="location_found"
               render={({ field }) => (
@@ -133,7 +148,7 @@ const AddFoundItem = () => {
             />
           </div>
           <div className="w-1/2">
-            <FormField
+            <Controller
               control={form.control}
               name="found_date_time"
               render={({ field }) => (
@@ -144,7 +159,7 @@ const AddFoundItem = () => {
         </div>
         <div className="flex gap-4">
           <div className="w-1/2">
-            <FormField
+            <Controller
               control={form.control}
               name="found_by"
               render={({ field }) => (
@@ -153,7 +168,7 @@ const AddFoundItem = () => {
             />
           </div>
           <div className="w-1/2">
-            <FormField
+            <Controller
               control={form.control}
               name="note"
               render={({ field }) => (
@@ -167,7 +182,7 @@ const AddFoundItem = () => {
           บันทึก
         </MuiButton>
       </form>
-    </Form>
+    </FormProvider>
   );
 };
 
