@@ -1,9 +1,7 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
 import CssBaseline from "@mui/material/CssBaseline";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
@@ -12,6 +10,11 @@ import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+// import { auth } from "../firebaseConfig";
+// import { signInWithEmailAndPassword } from "firebase/auth";
+import axios from "axios";
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -58,35 +61,59 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 const Login = (props: { disableCustomTheme?: boolean }) => {
   const navigate = useNavigate();
 
-  const [usernameError, setUsernameError] = React.useState(false);
-  const [usernameErrorMessage, setUsernameErrorMessage] = React.useState("");
+  const [emailError, setEmailError] = React.useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
 
   const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (usernameError || passwordError) {
+    if (emailError || passwordError) {
       return;
     }
     const data = new FormData(event.currentTarget);
 
-    const username = data.get("username")?.toString() ?? "";
+    const email = data.get("email")?.toString() ?? "";
     const password = data.get("password")?.toString() ?? "";
+
+    try {
+      // const userCredential = await signInWithEmailAndPassword(
+      //   auth,
+      //   email,
+      //   password
+      // );
+      // const idToken = await userCredential.user.getIdToken();
+      // await axios.post(
+      //   `${apiUrl}/signin`,
+      //   { idToken },
+      //   { withCredentials: true }
+      // );
+
+      await axios.post(
+        `${apiUrl}/signin`,
+        { email, password },
+        { withCredentials: true }
+      );
+
+      navigate("/");
+    } catch (error) {
+      console.error("Login error:", error);
+    }
   };
 
   const validateInputs = () => {
-    const username = document.getElementById("username") as HTMLInputElement;
+    const email = document.getElementById("email") as HTMLInputElement;
     const password = document.getElementById("password") as HTMLInputElement;
 
     let isValid = true;
 
-    if (!username.value) {
-      setUsernameError(true);
-      setUsernameErrorMessage("จำเป็นต้องระบุชื่อบัญชี");
+    if (!email.value) {
+      setEmailError(true);
+      setEmailErrorMessage("จำเป็นต้องระบุชื่อบัญชี");
       isValid = false;
     } else {
-      setUsernameError(false);
-      setUsernameErrorMessage("");
+      setEmailError(false);
+      setEmailErrorMessage("");
     }
 
     if (!password.value || password.value.length < 6) {
@@ -125,19 +152,19 @@ const Login = (props: { disableCustomTheme?: boolean }) => {
             }}
           >
             <FormControl>
-              <FormLabel htmlFor="username">ชื่อบัญชี</FormLabel>
+              <FormLabel htmlFor="email">ชื่อบัญชี</FormLabel>
               <TextField
-                error={usernameError}
-                helperText={usernameErrorMessage}
-                id="username"
-                type="username"
-                name="username"
-                autoComplete="off"
+                error={emailError}
+                helperText={emailErrorMessage}
+                id="email"
+                type="email"
+                name="email"
+                autoComplete="email"
                 autoFocus
                 required
                 fullWidth
                 variant="outlined"
-                color={usernameError ? "error" : "primary"}
+                color={emailError ? "error" : "primary"}
               />
             </FormControl>
             <FormControl>
@@ -150,7 +177,6 @@ const Login = (props: { disableCustomTheme?: boolean }) => {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                // autoFocus
                 required
                 fullWidth
                 variant="outlined"
