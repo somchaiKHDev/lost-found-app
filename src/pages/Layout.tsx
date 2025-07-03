@@ -1,4 +1,3 @@
-import React, { type ReactNode } from "react";
 import {
   Disclosure,
   DisclosureButton,
@@ -9,7 +8,10 @@ import {
   MenuItems,
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { NavLink } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const user = {
   name: "Tom Cook",
@@ -32,10 +34,25 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-type LayoutProps = {
-  children: ReactNode;
-};
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout = () => {
+  const navigate = useNavigate();
+
+  const signOut = async () => {
+    try {
+      await axios.post(
+        `${apiUrl}/signout`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      window.localStorage.removeItem("isLogined");
+      navigate("/login");
+    } catch (error) {
+      console.error("Signout error:", error);
+    }
+  };
+
   return (
     <div className="min-h-full">
       <Disclosure as="nav" className="bg-gray-800">
@@ -100,12 +117,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   >
                     {userNavigation.map((item) => (
                       <MenuItem key={item.name}>
-                        <a
-                          href={item.href}
-                          className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                        <div
+                          className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden cursor-pointer"
+                          onClick={() => signOut()}
                         >
                           {item.name}
-                        </a>
+                        </div>
                       </MenuItem>
                     ))}
                   </MenuItems>
@@ -213,7 +230,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </header>
       <main>
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          {children}
+          <Outlet />
         </div>
       </main>
     </div>

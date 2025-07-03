@@ -10,8 +10,6 @@ import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-// import { auth } from "../firebaseConfig";
-// import { signInWithEmailAndPassword } from "firebase/auth";
 import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -76,29 +74,12 @@ const Login = (props: { disableCustomTheme?: boolean }) => {
     const email = data.get("email")?.toString() ?? "";
     const password = data.get("password")?.toString() ?? "";
 
-    try {
-      // const userCredential = await signInWithEmailAndPassword(
-      //   auth,
-      //   email,
-      //   password
-      // );
-      // const idToken = await userCredential.user.getIdToken();
-      // await axios.post(
-      //   `${apiUrl}/signin`,
-      //   { idToken },
-      //   { withCredentials: true }
-      // );
-
-      await axios.post(
-        `${apiUrl}/signin`,
-        { email, password },
-        { withCredentials: true }
-      );
-
-      navigate("/");
-    } catch (error) {
-      console.error("Login error:", error);
-    }
+    axios
+      .post(`${apiUrl}/signin`, { email, password }, { withCredentials: true })
+      .then(() => {
+        window.localStorage.setItem("isLogined", "true");
+        navigate("/");
+      });
   };
 
   const validateInputs = () => {

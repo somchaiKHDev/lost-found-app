@@ -1,60 +1,70 @@
 import "./App.css";
-import { Navigate, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 import Home from "./pages/Home";
-import Layout from "./pages/Layout";
+import Login from "./pages/Login";
+import ProtectedRoute from "./ProtectedRoute";
 import AddFoundItem from "./pages/AddFoundItem";
 import AddLostItem from "./pages/AddLostItem";
-import Login from "./pages/Login";
+import Layout from "./pages/Layout";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import React, { useState } from "react";
+
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const navigate = useNavigate();
+  const isLogined = Boolean(window.localStorage.getItem("isLogined"));
+  const [isLoading, setIsLoading] = useState<boolean>(isLogined);
 
-  React.useEffect(() => {
-    fetchUser();
-  }, []);
+  useEffect(() => {
+    if (isLogined) {
+      axios
+        .get(`${apiUrl}/auth/verify`, { withCredentials: true })
+        .then(() => {
+          window.localStorage.setItem("isLogined", "true");
+        })
+        .catch(() => {
+          window.localStorage.removeItem("isLogined");
+          navigate("/login", { replace: true });
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      window.localStorage.removeItem("isLogined");
+      setIsLoading(false);
+    }
+  }, [isLogined]);
 
-  const fetchUser = async () => {
-    axios
-      .get(`${apiUrl}/auth/profile`, {
-        withCredentials: true,
-      })
-      .then(() => {
-        setIsLoggedIn(true);
-      })
-      .catch(() => {
-        setIsLoggedIn(false);
-      });
-  };
-
-  if (isLoggedIn === null) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <Routes>
       <Route
         path="/login"
-        element={isLoggedIn ? <Navigate to="/" replace /> : <Login />}
+        element={isLogined ? <Navigate to="/" /> : <Login />}
       />
       <Route
-        path="/*"
+        path="/"
         element={
-          isLoggedIn ? (
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/add-found-item" element={<AddFoundItem />} />
-                <Route path="/add-lost-item" element={<AddLostItem />} />
-              </Routes>
-            </Layout>
-          ) : (
-            <Navigate to="/login" replace />
-          )
+          <ProtectedRoute isAuthenticated={isLogined}>
+            <Layout />
+          </ProtectedRoute>
         }
-      />
+      >
+        <Route index element={<Home />} />
+        <Route path="add-found-item" element={<AddFoundItem />} />
+        <Route path="add-lost-item" element={<AddLostItem />} />
+      </Route>
+
+      {/* fallback route */}
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 };
