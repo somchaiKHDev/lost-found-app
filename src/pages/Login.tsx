@@ -76,8 +76,9 @@ const Login = (props: { disableCustomTheme?: boolean }) => {
 
     axios
       .post(`${apiUrl}/signin`, { email, password }, { withCredentials: true })
-      .then(() => {
-        window.localStorage.setItem("isLogined", "true");
+      .then((response) => {
+        console.log('signin response', response)
+        window.localStorage.setItem("isLogined", JSON.stringify(response.data));
         navigate("/");
       });
   };

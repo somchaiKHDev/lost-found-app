@@ -26,8 +26,8 @@ const App = () => {
     if (isLogined) {
       axios
         .get(`${apiUrl}/auth/verify`, { withCredentials: true })
-        .then(() => {
-          window.localStorage.setItem("isLogined", "true");
+        .then((response) => {
+          window.localStorage.setItem("isLogined", JSON.stringify(response.data));
         })
         .catch(() => {
           window.localStorage.removeItem("isLogined");
