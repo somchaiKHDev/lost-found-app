@@ -8,6 +8,10 @@ import { Autocomplete } from "../components/forms/Autocomplete";
 import { MuiDateTimeField } from "../components/forms/DateTimeField";
 import moment from "moment";
 import { FileUpload } from "../components/forms/FileUpload";
+import axios from "axios";
+import imageCompression from "browser-image-compression";
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const FormSchema = z.object({
   file_upload: z
@@ -48,8 +52,48 @@ const AddFoundItem = () => {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log("onSubmit", data);
+
+    const formData = new FormData();
+
+    formData.append("item_type", data.item_type);
+    formData.append("description", data.description);
+    formData.append("location_found", data.location_found);
+    formData.append("found_date_time", JSON.stringify(data.found_date_time));
+    formData.append("found_by", data.found_by);
+    formData.append("note", data.note);
+
+    const localStorage = window.localStorage.getItem("isLogined");
+    if (localStorage) {
+      const jsonData = JSON.parse(localStorage);
+      formData.append("create_by", jsonData.uid);
+    }
+
+    if (typeof data.file_upload[0] === "object") {
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 800,
+        useWebWorker: true,
+      };
+      const compressedFile = await imageCompression(
+        data.file_upload[0],
+        options
+      );
+      formData.append("file", compressedFile);
+    }
+
+    axios
+      .post(`${apiUrl}/found-items/add`, formData, {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((res) => {
+        console.log("res", res);
+        form.reset()
+      })
+      .catch()
+      .finally();
   }
 
   return (
