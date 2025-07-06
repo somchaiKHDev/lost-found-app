@@ -7,6 +7,9 @@ import { TextField } from "../components/forms/TextField";
 import { Autocomplete } from "../components/forms/Autocomplete";
 import { MuiDateTimeField } from "../components/forms/DateTimeField";
 import moment from "moment";
+import axios from "axios";
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const FormSchema = z.object({
   fullname: z.string().min(1, {
@@ -51,7 +54,32 @@ const AddLostItem = () => {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("onSubmit", data);
+    let params = {
+      fullname: data.fullname,
+      contact_phone: data.contact_phone,
+      item_type: data.item_type,
+      description: data.description,
+      location: data.location,
+      date_lost: data.date_lost,
+      note: data.note,
+      create_by: "",
+    };
+
+    const localStorage = window.localStorage.getItem("isLogined");
+    if (localStorage) {
+      const jsonData = JSON.parse(localStorage);
+      params.create_by = jsonData.uid;
+    }
+
+    axios
+      .post(`${apiUrl}/lost-items/add`, params, {
+        withCredentials: true,
+      })
+      .then(() => {
+        form.reset();
+      })
+      .catch()
+      .finally();
   }
 
   return (

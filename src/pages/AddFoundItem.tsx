@@ -53,10 +53,7 @@ const AddFoundItem = () => {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("onSubmit", data);
-
     const formData = new FormData();
-
     formData.append("item_type", data.item_type);
     formData.append("description", data.description);
     formData.append("location_found", data.location_found);
@@ -88,8 +85,7 @@ const AddFoundItem = () => {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       })
-      .then((res) => {
-        console.log("res", res);
+      .then(() => {
         form.reset()
       })
       .catch()
