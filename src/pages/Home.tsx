@@ -71,6 +71,13 @@ const columns: readonly Column[] = [
   },
 ];
 
+interface FormType {
+  type: LookupType | null;
+  status: LookupType | null;
+  date_range: Date[];
+  keyword: string;
+}
+
 const Home = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -87,18 +94,36 @@ const Home = () => {
     setPage(0);
   };
 
-  const form = useForm({
+  const form = useForm<FormType>({
     defaultValues: {
       type: null,
-      status: "",
+      status: null,
       date_range: [new Date(), new Date()],
       keyword: "",
     },
   });
 
-  function onSubmit(data: typeof form.formState.defaultValues) {
-    console.log("onSubmit", data);
-  }
+  const onSubmit = (data: typeof form.formState.defaultValues) => {
+    const params: any = {
+      type: data?.type || undefined,
+      status:
+        data?.status && typeof data.status === "object"
+          ? data.status.value
+          : undefined,
+      startDate: data?.date_range?.[0],
+      endDate: data?.date_range?.[1],
+      keyword: data?.keyword || undefined,
+      page: page + 1,
+      limit: rowsPerPage,
+    };
+    axios
+      .post(`${apiUrl}/filter-item`, params, { withCredentials: true })
+      .then((res) => {
+        setRows(res.data);
+      })
+      .catch()
+      .finally();
+  };
 
   useEffect(() => {
     fetchData();
