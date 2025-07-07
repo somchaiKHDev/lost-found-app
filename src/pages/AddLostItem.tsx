@@ -18,9 +18,15 @@ const FormSchema = z.object({
   contact_phone: z.string().min(1, {
     message: "จำเป็นต้องกรอกข้อมูล",
   }),
-  item_type: z.string().min(1, {
-    message: "กรุณาเลือกประเภทสิ่งของ",
-  }),
+  // item_type: z.string().min(1, {
+  //   message: "กรุณาเลือกประเภทสิ่งของ",
+  // }),
+  item_type: z
+    .object({
+      label: z.string().min(1, { message: "กรุณาเลือกประเภทสิ่งของ" }),
+      value: z.string().min(1, { message: "กรุณาเลือกประเภทสิ่งของ" }),
+    })
+    .nullable(),
   description: z.string().min(1, {
     message: "จำเป็นต้องกรอกข้อมูล",
   }),
@@ -46,7 +52,7 @@ const AddLostItem = () => {
     defaultValues: {
       fullname: "",
       contact_phone: "",
-      item_type: "",
+      item_type: null,
       description: "",
       location: "",
       date_lost: new Date(),
@@ -57,7 +63,8 @@ const AddLostItem = () => {
     let params = {
       fullname: data.fullname,
       contact_phone: data.contact_phone,
-      item_type: data.item_type,
+      item_type:
+        typeof data.item_type === "object" ? data.item_type?.value : "",
       description: data.description,
       location: data.location,
       datetime: data.date_lost,

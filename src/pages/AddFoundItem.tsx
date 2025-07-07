@@ -17,9 +17,13 @@ const FormSchema = z.object({
   file_upload: z
     .array(z.union([z.instanceof(File), z.string()]))
     .min(1, "กรุณาเลือกรูปภาพประกอบ"),
-  item_type: z.string().min(1, {
-    message: "กรุณาเลือกประเภทสิ่งของ",
-  }),
+  // item_type: z.string().min(1, {
+  //   message: "กรุณาเลือกประเภทสิ่งของ",
+  // }),
+  item_type: z.object({
+    label: z.string().min(1, { message: "กรุณาเลือกประเภทสิ่งของ" }),
+    value: z.string().min(1, { message: "กรุณาเลือกประเภทสิ่งของ" }),
+  }).nullable(),
   description: z.string().min(1, {
     message: "จำเป็นต้องกรอกข้อมูล",
   }),
@@ -45,7 +49,7 @@ const AddFoundItem = () => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       file_upload: [],
-      item_type: "",
+      item_type: null,
       description: "",
       location_found: "",
       found_date_time: new Date(),
@@ -54,7 +58,7 @@ const AddFoundItem = () => {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     const formData = new FormData();
-    formData.append("item_type", data.item_type);
+    formData.append("item_type", typeof data.item_type === 'object' ? data?.item_type?.value || "" : "");
     formData.append("description", data.description);
     formData.append("location", data.location_found);
     formData.append(
