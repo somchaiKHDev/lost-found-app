@@ -17,7 +17,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
   label,
   placeholder,
   description,
-  options,
+  options
 }) => {
   const { control, setValue } = useFormContext();
   const {
@@ -25,7 +25,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
     fieldState: { error },
   } = useController({ name, control });
 
-  const currentValue = options.find((opt) => opt.label === value) || null;
+  const currentValue = options.find((opt) => opt.value === value?.value) || null;
 
   useEffect(() => {
     if (currentValue === null && options.length > 0) {
@@ -51,7 +51,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
         getOptionLabel={(option) => option.label}
         value={currentValue}
         onChange={(_, newValue) => {
-          onChange(newValue?.label ?? null);
+          onChange(newValue ?? null);
         }}
         size="small"
         renderInput={(params: any) => (
@@ -62,7 +62,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
             placeholder={placeholder}
           />
         )}
-        isOptionEqualToValue={(option, val) => option.value === val.value}
+        isOptionEqualToValue={(option, val) => option.label === val.label}
         noOptionsText="ไม่พบตัวเลือก"
       />
 

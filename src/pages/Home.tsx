@@ -14,13 +14,16 @@ import { TextField } from "../components/forms/TextField";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import Box from "@mui/material/Box";
-import dayjs from "dayjs";
+import { ItemStatusLabels, type ItemStatus } from "../enums/itemStatusEnum";
+import "react-date-range/dist/styles.css"; // main css file
+import "react-date-range/dist/theme/default.css"; // theme css file
+import { DateRange } from "../components/forms/DateRange";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 interface Data {
   id: string;
-  type: string;
+  type: LookupType | null;
   image: string;
   description: string;
   location: string;
@@ -62,6 +65,9 @@ const columns: readonly Column[] = [
     id: "status",
     label: "สถานะ",
     minWidth: 100,
+    format: (value: ItemStatus) => {
+      return ItemStatusLabels[value];
+    },
   },
 ];
 
@@ -83,9 +89,9 @@ const Home = () => {
 
   const form = useForm({
     defaultValues: {
-      type: "",
+      type: null,
       status: "",
-      date_range: "",
+      date_range: [new Date(), new Date()],
       keyword: "",
     },
   });
@@ -102,7 +108,6 @@ const Home = () => {
     axios
       .get(`${apiUrl}/all-item`, { withCredentials: true })
       .then((res) => {
-        console.log("res", res);
         setRows(res.data);
       })
       .catch()
@@ -124,7 +129,10 @@ const Home = () => {
                 render={({ field }) => (
                   <Autocomplete
                     placeholder="ประเภทของรายการ"
-                    options={[]}
+                    options={[
+                      { label: "ของที่หาย", value: "lost" },
+                      { label: "ของที่พบ", value: "found" },
+                    ]}
                     {...field}
                   />
                 )}
@@ -135,7 +143,18 @@ const Home = () => {
                 control={form.control}
                 name="status"
                 render={({ field }) => (
-                  <Autocomplete placeholder="สถานะ" options={[]} {...field} />
+                  <Autocomplete
+                    placeholder="สถานะ"
+                    options={[
+                      { label: "กำลังรอดำเนินการ", value: "pending" },
+                      { label: "จับคู่สำเร็จ", value: "matched" },
+                      { label: "คืนแล้ว", value: "returned" },
+                      { label: "หมดอายุ", value: "expired" },
+                      { label: "ยกเลิกแล้ว", value: "cancelled" },
+                      { label: "กำลังตรวจสอบ", value: "reviewing" },
+                    ]}
+                    {...field}
+                  />
                 )}
               />
             </div>
@@ -144,10 +163,20 @@ const Home = () => {
                 control={form.control}
                 name="date_range"
                 render={({ field }) => (
-                  <MuiDateTimeField
+                  <DateRange
                     placeholder="วันที่เริ่มต้น - สิ้นสุด"
                     {...field}
                   />
+                  // <MuiDateTimeField
+                  //   placeholder="วันที่เริ่มต้น - สิ้นสุด"
+                  //   {...field}
+                  // />
+                  // <DateRange
+                  //   editableDateInputs={true}
+                  //   onChange={(item) => onChange([item.selection])}
+                  //   moveRangeOnFirstSelection={false}
+                  //   // ranges={state}
+                  // />
                 )}
               />
             </div>
