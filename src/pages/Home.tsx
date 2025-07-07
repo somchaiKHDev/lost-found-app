@@ -18,6 +18,7 @@ import { ItemStatusLabels, type ItemStatus } from "../enums/itemStatusEnum";
 import "react-date-range/dist/styles.css"; // main css file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { DateRange } from "../components/forms/DateRange";
+import { ItemTypeLabels, type ItemTypeses } from "../enums/itemTypeEnum";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -41,7 +42,14 @@ interface Column {
 }
 
 const columns: readonly Column[] = [
-  { id: "type", label: "ประเภท", minWidth: 100 },
+  {
+    id: "type",
+    label: "ประเภท",
+    minWidth: 100,
+    format: (value: ItemTypeses) => {
+      return ItemTypeLabels[value];
+    },
+  },
   { id: "imageUrl", label: "รูปภาพ", minWidth: 100 },
   { id: "description", label: "รายละเอียดสิ่งของ", minWidth: 170 },
   {
@@ -98,14 +106,17 @@ const Home = () => {
     defaultValues: {
       type: null,
       status: null,
-      date_range: [new Date(), new Date()],
+      date_range: [],
       keyword: "",
     },
   });
 
   const onSubmit = (data: typeof form.formState.defaultValues) => {
     const params: any = {
-      type: data?.type || undefined,
+      type:
+        data?.type && typeof data.type === "object"
+          ? data.type.value
+          : undefined,
       status:
         data?.status && typeof data.status === "object"
           ? data.status.value
@@ -192,16 +203,6 @@ const Home = () => {
                     placeholder="วันที่เริ่มต้น - สิ้นสุด"
                     {...field}
                   />
-                  // <MuiDateTimeField
-                  //   placeholder="วันที่เริ่มต้น - สิ้นสุด"
-                  //   {...field}
-                  // />
-                  // <DateRange
-                  //   editableDateInputs={true}
-                  //   onChange={(item) => onChange([item.selection])}
-                  //   moveRangeOnFirstSelection={false}
-                  //   // ranges={state}
-                  // />
                 )}
               />
             </div>
