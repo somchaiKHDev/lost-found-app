@@ -6,12 +6,17 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import React from "react";
+import React, { useEffect } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { Autocomplete } from "../components/forms/Autocomplete";
 import { MuiDateTimeField } from "../components/forms/DateTimeField";
 import { TextField } from "../components/forms/TextField";
 import Button from "@mui/material/Button";
+import axios from "axios";
+import Box from "@mui/material/Box";
+import dayjs from "dayjs";
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface Data {
   id: string;
@@ -29,12 +34,12 @@ interface Column {
   label: string;
   minWidth?: number;
   align?: "right";
-  format?: (value: number) => string;
+  format?: (value: any) => string;
 }
 
 const columns: readonly Column[] = [
   { id: "type", label: "ประเภท", minWidth: 100 },
-  { id: "image", label: "รูปภาพ", minWidth: 100 },
+  { id: "imageUrl", label: "รูปภาพ", minWidth: 100 },
   { id: "description", label: "รายละเอียดสิ่งของ", minWidth: 170 },
   {
     id: "location",
@@ -42,10 +47,16 @@ const columns: readonly Column[] = [
     minWidth: 170,
   },
   {
-    id: "date",
+    id: "datetime",
     label: "วันที่ที่พบหรือหาย",
     minWidth: 170,
-    format: (value: number) => value.toLocaleString("en-US"),
+    format: (value: any) => {
+      return new Date(value).toLocaleDateString("th-TH", {
+        year: "numeric",
+        month: "long",
+        day: "2-digit",
+      });
+    },
   },
   {
     id: "status",
@@ -82,6 +93,21 @@ const Home = () => {
   function onSubmit(data: typeof form.formState.defaultValues) {
     console.log("onSubmit", data);
   }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
+    axios
+      .get(`${apiUrl}/all-item`, { withCredentials: true })
+      .then((res) => {
+        console.log("res", res);
+        setRows(res.data);
+      })
+      .catch()
+      .finally();
+  };
 
   return (
     <>
@@ -182,9 +208,17 @@ const Home = () => {
                         const value = row[column.id];
                         return (
                           <TableCell key={column.id} align={column.align}>
-                            {column.format && typeof value === "number"
-                              ? column.format(value)
-                              : value}
+                            {column.id === "imageUrl" ? (
+                              <Box
+                                component="img"
+                                src={value}
+                                sx={{ width: 50 }}
+                              ></Box>
+                            ) : column?.format ? (
+                              column?.format(value)
+                            ) : (
+                              value
+                            )}
                           </TableCell>
                         );
                       })}

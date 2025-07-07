@@ -56,8 +56,13 @@ const AddFoundItem = () => {
     const formData = new FormData();
     formData.append("item_type", data.item_type);
     formData.append("description", data.description);
-    formData.append("location_found", data.location_found);
-    formData.append("found_date_time", JSON.stringify(data.found_date_time));
+    formData.append("location", data.location_found);
+    formData.append(
+      "datetime",
+      data.found_date_time instanceof Date
+        ? data.found_date_time.toISOString()
+        : ""
+    );
     formData.append("found_by", data.found_by);
     formData.append("note", data.note);
 
@@ -86,7 +91,7 @@ const AddFoundItem = () => {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then(() => {
-        form.reset()
+        form.reset();
       })
       .catch()
       .finally();

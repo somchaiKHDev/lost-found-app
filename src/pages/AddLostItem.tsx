@@ -60,7 +60,7 @@ const AddLostItem = () => {
       item_type: data.item_type,
       description: data.description,
       location: data.location,
-      date_lost: data.date_lost,
+      datetime: data.date_lost,
       note: data.note,
       create_by: "",
     };
