@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { createContext, useContext, useState } from "react";
+import { useLoadingContext } from "./LoadingContext";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -16,16 +17,20 @@ const SummaryItemContext = createContext<SummaryItemContextType | undefined>(
 export const SummaryItemProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { setLoading } = useLoadingContext();
   const [summaryItem, setSummaryItem] = useState<SummaryItem | null>(null);
 
   const fetchSummaryItem = async () => {
+    setLoading(true)
     axios
       .get(`${apiUrl}/summary`, { withCredentials: true })
       .then((res) => {
         setSummaryItem(res.data);
       })
       .catch()
-      .finally();
+      .finally(() => {
+        setLoading(false)
+      });
   };
 
   return (

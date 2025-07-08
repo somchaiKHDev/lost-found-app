@@ -21,6 +21,7 @@ import { ItemTypeLabels, type ItemTypeses } from "../enums/itemTypeEnum";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import { useLoadingContext } from "../contexts/LoadingContext";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -82,6 +83,7 @@ interface FormType {
 }
 
 const Home = () => {
+  const { setLoading } = useLoadingContext();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows, setRows] = React.useState<DataItem[]>([]);
@@ -107,7 +109,6 @@ const Home = () => {
   });
 
   const onSubmit = (data: typeof form.formState.defaultValues) => {
-    console.log("data", data);
     const start = data?.date_range?.[0];
     const end = data?.date_range?.[1];
 
@@ -128,14 +129,17 @@ const Home = () => {
       page: page + 1,
       limit: rowsPerPage,
     };
-    console.log("params", params);
+
+    setLoading(true);
     axios
       .post(`${apiUrl}/filter-item`, params, { withCredentials: true })
       .then((res) => {
         setRows(res.data);
       })
       .catch()
-      .finally();
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -143,13 +147,16 @@ const Home = () => {
   }, []);
 
   const fetchData = () => {
+    setLoading(true);
     axios
       .get(`${apiUrl}/all-item`, { withCredentials: true })
       .then((res) => {
         setRows(res.data);
       })
       .catch()
-      .finally();
+      .finally(() => {
+        setLoading(false)
+      });
   };
 
   return (

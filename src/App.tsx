@@ -15,6 +15,7 @@ import Layout from "./pages/Layout";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { SummaryItemProvider } from "./contexts/SummaryItemContext";
+import { LoadingProvider } from "./contexts/LoadingContext";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -49,29 +50,31 @@ const App = () => {
   if (isLoading) return <div>Loading...</div>;
 
   return (
-    <Routes>
-      <Route
-        path="/login"
-        element={isLogined ? <Navigate to="/" /> : <Login />}
-      />
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute isAuthenticated={isLogined}>
-            <SummaryItemProvider>
-              <Layout />
-            </SummaryItemProvider>
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Home />} />
-        <Route path="add-found-item" element={<AddFoundItem />} />
-        <Route path="add-lost-item" element={<AddLostItem />} />
-      </Route>
+    <LoadingProvider>
+      <Routes>
+        <Route
+          path="/login"
+          element={isLogined ? <Navigate to="/" /> : <Login />}
+        />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute isAuthenticated={isLogined}>
+              <SummaryItemProvider>
+                <Layout />
+              </SummaryItemProvider>
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Home />} />
+          <Route path="add-found-item" element={<AddFoundItem />} />
+          <Route path="add-lost-item" element={<AddLostItem />} />
+        </Route>
 
-      {/* fallback route */}
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
+        {/* fallback route */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </LoadingProvider>
   );
 };
 

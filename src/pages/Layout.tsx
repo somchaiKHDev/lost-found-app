@@ -7,17 +7,14 @@ import {
   MenuItem,
   MenuItems,
 } from "@headlessui/react";
-import {
-  Bars3Icon,
-  BellIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useSummaryItemContext } from "../contexts/SummaryItemContext";
 import { useEffect } from "react";
-import clsx from 'clsx';
+import clsx from "clsx";
+import { useLoadingContext } from "../contexts/LoadingContext";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -45,6 +42,7 @@ function classNames(...classes: string[]) {
 const Layout = () => {
   const navigate = useNavigate();
   const { summaryItem, fetchSummaryItem } = useSummaryItemContext();
+  const { setLoading } = useLoadingContext();
 
   useEffect(() => {
     fetchSummaryItem();
@@ -52,6 +50,7 @@ const Layout = () => {
 
   const signOut = async () => {
     try {
+      setLoading(true);
       await axios.post(
         `${apiUrl}/signout`,
         {},
@@ -63,6 +62,8 @@ const Layout = () => {
       navigate("/login");
     } catch (error) {
       console.error("Signout error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -232,21 +233,40 @@ const Layout = () => {
             <span className="text-base">แจ้งของหาย</span>
             <span className="text-xl font-medium">{summaryItem?.lost}</span>
           </div>
-          <div className={clsx("flex flex-col grow items-center gap-2 p-4 border border-gray-300 rounded-lg", Number(summaryItem?.returned) > 0 ? "border-blue-300 bg-blue-100": "")}>
+          <div
+            className={clsx(
+              "flex flex-col grow items-center gap-2 p-4 border border-gray-300 rounded-lg",
+              Number(summaryItem?.returned) > 0
+                ? "border-blue-300 bg-blue-100"
+                : ""
+            )}
+          >
             <span className="text-base">คืนแล้ว</span>
             <span className="text-xl font-medium">{summaryItem?.returned}</span>
           </div>
-          <div className={clsx("flex flex-col grow items-center gap-2 p-4 border border-gray-300 rounded-lg", Number(summaryItem?.reviewing) > 0 ? "border-gray-300 bg-gray-100": "")}>
+          <div
+            className={clsx(
+              "flex flex-col grow items-center gap-2 p-4 border border-gray-300 rounded-lg",
+              Number(summaryItem?.reviewing) > 0
+                ? "border-gray-300 bg-gray-100"
+                : ""
+            )}
+          >
             <span className="text-base">รอการตรวจสอบ</span>
             <span className="text-xl font-medium">
               {summaryItem?.reviewing}
             </span>
           </div>
-          <div className={clsx("flex flex-col grow items-center gap-2 p-4 border border-gray-300 rounded-lg", Number(summaryItem?.matched) > 0 ? "border-green-300 bg-green-100": "")}>
+          <div
+            className={clsx(
+              "flex flex-col grow items-center gap-2 p-4 border border-gray-300 rounded-lg",
+              Number(summaryItem?.matched) > 0
+                ? "border-green-300 bg-green-100"
+                : ""
+            )}
+          >
             <span className="text-base">Match</span>
-            <span className="text-xl font-medium">
-              {summaryItem?.matched}
-            </span>
+            <span className="text-xl font-medium">{summaryItem?.matched}</span>
           </div>
         </div>
       </header>

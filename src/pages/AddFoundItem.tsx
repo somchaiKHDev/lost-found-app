@@ -12,6 +12,7 @@ import axios from "axios";
 import imageCompression from "browser-image-compression";
 import { useSummaryItemContext } from "../contexts/SummaryItemContext";
 import dayjs from "dayjs";
+import { useLoadingContext } from "../contexts/LoadingContext";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -47,6 +48,7 @@ const FormSchema = z.object({
 
 const AddFoundItem = () => {
   const { fetchSummaryItem } = useSummaryItemContext();
+  const { setLoading } = useLoadingContext();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -95,17 +97,22 @@ const AddFoundItem = () => {
       formData.append("file", compressedFile);
     }
 
+    setLoading(true);
     axios
       .post(`${apiUrl}/found-items/add`, formData, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then(() => {
-        fetchSummaryItem()
+        fetchSummaryItem();
         form.reset();
       })
-      .catch()
-      .finally();
+      .catch((error) => {
+        console.error("Add found-items failed:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }
 
   return (

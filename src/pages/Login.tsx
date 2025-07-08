@@ -11,6 +11,7 @@ import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useLoadingContext } from "../contexts/LoadingContext";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -58,13 +59,14 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 const Login = (props: { disableCustomTheme?: boolean }) => {
   const navigate = useNavigate();
+  const { setLoading } = useLoadingContext();
 
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
 
-  const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSignIn = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (emailError || passwordError) {
       return;
@@ -74,12 +76,19 @@ const Login = (props: { disableCustomTheme?: boolean }) => {
     const email = data.get("email")?.toString() ?? "";
     const password = data.get("password")?.toString() ?? "";
 
+    setLoading(true);
     axios
       .post(`${apiUrl}/signin`, { email, password }, { withCredentials: true })
       .then((response) => {
-        console.log('signin response', response)
+        console.log("signin response", response);
         window.localStorage.setItem("isLogined", JSON.stringify(response.data));
         navigate("/");
+      })
+      .catch((error) => {
+        console.error("Sign in failed:", error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 

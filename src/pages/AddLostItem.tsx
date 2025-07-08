@@ -9,6 +9,7 @@ import { MuiDateTimeField } from "../components/forms/DateTimeField";
 import moment from "moment";
 import axios from "axios";
 import { useSummaryItemContext } from "../contexts/SummaryItemContext";
+import { useLoadingContext } from "../contexts/LoadingContext";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -46,6 +47,7 @@ const FormSchema = z.object({
 
 const AddLostItem = () => {
   const { fetchSummaryItem } = useSummaryItemContext();
+  const { setLoading } = useLoadingContext();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -78,7 +80,7 @@ const AddLostItem = () => {
       const jsonData = JSON.parse(localStorage);
       params.create_by = jsonData.uid;
     }
-
+    setLoading(true);
     axios
       .post(`${apiUrl}/lost-items/add`, params, {
         withCredentials: true,
@@ -87,8 +89,12 @@ const AddLostItem = () => {
         fetchSummaryItem();
         form.reset();
       })
-      .catch()
-      .finally();
+      .catch((error) => {
+        console.error("Add lost-items failed:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }
 
   return (
