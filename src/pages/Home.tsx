@@ -104,7 +104,7 @@ const Home = () => {
     setPage(p);
 
     const data = form.getValues();
-    console.log('data', data)
+    console.log("data", data);
     filterItem(data, rpp, p + 1);
   };
 
@@ -313,6 +313,12 @@ const Home = () => {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          labelRowsPerPage="แสดงข้อมูลต่อหน้า:"
+          labelDisplayedRows={({ from, to, count }) =>
+            `แสดง ${from} จากทั้งหมด ${
+              count !== -1 ? count : `มากกว่า ${to}`
+            }`
+          }
         />
       </Paper>
     </>
