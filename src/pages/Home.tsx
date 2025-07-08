@@ -105,7 +105,6 @@ const Home = () => {
     setPage(p);
 
     const data = form.getValues();
-    console.log("data", data);
     filterItem(data, rpp, p + 1);
   };
 
@@ -172,6 +171,10 @@ const Home = () => {
         setLoading(false);
       });
   };
+
+  const previewDataRow = (dataRow: DataItem) => () => {
+    console.log('previewDataRow', dataRow)
+  }
 
   return (
     <>
@@ -281,7 +284,7 @@ const Home = () => {
                 rows
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id} className="cursor-pointer" onClick={previewDataRow(row)}>
                       {columns.map((column) => {
                         const value = row[column.id];
                         return (
