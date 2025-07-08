@@ -19,4 +19,5 @@ interface SummaryItem {
   lost: number;
   returned: number;
   reviewing: number;
+  matched: number
 }

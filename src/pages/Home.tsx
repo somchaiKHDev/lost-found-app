@@ -33,7 +33,7 @@ const columns: readonly Column[] = [
   {
     id: "type",
     label: "ประเภท",
-    minWidth: 100,
+    minWidth: 120,
     format: (value: ItemTypeses) => {
       return ItemTypeLabels[value];
     },

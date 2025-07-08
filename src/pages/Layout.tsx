@@ -241,6 +241,12 @@ const Layout = () => {
               {summaryItem?.reviewing}
             </span>
           </div>
+          <div className="flex flex-col grow items-center gap-2 p-4 border border-gray-300 rounded-lg">
+            <span className="text-base">Match</span>
+            <span className="text-xl font-medium">
+              {summaryItem?.matched}
+            </span>
+          </div>
         </div>
       </header>
       <main>
