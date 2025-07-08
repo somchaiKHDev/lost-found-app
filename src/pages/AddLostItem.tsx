@@ -67,7 +67,8 @@ const AddLostItem = () => {
         typeof data.item_type === "object" ? data.item_type?.value : "",
       description: data.description,
       location: data.location,
-      datetime: data.date_lost,
+      datetime:
+        data.date_lost instanceof Date ? data.date_lost.toISOString() : "",
       note: data.note,
       create_by: "",
     };
@@ -83,7 +84,7 @@ const AddLostItem = () => {
         withCredentials: true,
       })
       .then(() => {
-        fetchSummaryItem()
+        fetchSummaryItem();
         form.reset();
       })
       .catch()

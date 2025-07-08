@@ -18,8 +18,15 @@ import "react-date-range/dist/styles.css"; // main css file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { DateRange } from "../components/forms/DateRange";
 import { ItemTypeLabels, type ItemTypeses } from "../enums/itemTypeEnum";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const apiUrl = import.meta.env.VITE_API_URL;
+const TIMEZONE = "Asia/Bangkok";
 
 interface Column {
   id: string;
@@ -100,6 +107,10 @@ const Home = () => {
   });
 
   const onSubmit = (data: typeof form.formState.defaultValues) => {
+    console.log("data", data);
+    const start = data?.date_range?.[0];
+    const end = data?.date_range?.[1];
+
     const params: any = {
       type:
         data?.type && typeof data.type === "object"
@@ -109,12 +120,15 @@ const Home = () => {
         data?.status && typeof data.status === "object"
           ? data.status.value
           : undefined,
-      startDate: data?.date_range?.[0],
-      endDate: data?.date_range?.[1],
+      startDate: start
+        ? dayjs(start).tz(TIMEZONE).startOf("day").format()
+        : undefined,
+      endDate: end ? dayjs(end).tz(TIMEZONE).endOf("day").format() : undefined,
       keyword: data?.keyword || undefined,
       page: page + 1,
       limit: rowsPerPage,
     };
+    console.log("params", params);
     axios
       .post(`${apiUrl}/filter-item`, params, { withCredentials: true })
       .then((res) => {
