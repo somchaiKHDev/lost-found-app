@@ -9,7 +9,6 @@ import TableRow from "@mui/material/TableRow";
 import React, { useEffect } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { Autocomplete } from "../components/forms/Autocomplete";
-import { MuiDateTimeField } from "../components/forms/DateTimeField";
 import { TextField } from "../components/forms/TextField";
 import Button from "@mui/material/Button";
 import axios from "axios";
@@ -21,17 +20,6 @@ import { DateRange } from "../components/forms/DateRange";
 import { ItemTypeLabels, type ItemTypeses } from "../enums/itemTypeEnum";
 
 const apiUrl = import.meta.env.VITE_API_URL;
-
-interface Data {
-  id: string;
-  type: LookupType | null;
-  image: string;
-  description: string;
-  location: string;
-  date: string;
-  status: string;
-  [key: string]: any;
-}
 
 interface Column {
   id: string;
@@ -89,7 +77,7 @@ interface FormType {
 const Home = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [rows, setRows] = React.useState<Data[]>([]);
+  const [rows, setRows] = React.useState<DataItem[]>([]);
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
@@ -166,8 +154,8 @@ const Home = () => {
                   <Autocomplete
                     placeholder="ประเภทของรายการ"
                     options={[
-                      { label: "ของที่หาย", value: "lost" },
-                      { label: "ของที่พบ", value: "found" },
+                      { label: "แจ้งของหาย", value: "lost" },
+                      { label: "เก็บของได้", value: "found" },
                     ]}
                     {...field}
                   />

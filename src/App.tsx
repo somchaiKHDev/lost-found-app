@@ -14,6 +14,7 @@ import AddLostItem from "./pages/AddLostItem";
 import Layout from "./pages/Layout";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { SummaryItemProvider } from "./contexts/SummaryItemContext";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -27,7 +28,10 @@ const App = () => {
       axios
         .get(`${apiUrl}/auth/verify`, { withCredentials: true })
         .then((response) => {
-          window.localStorage.setItem("isLogined", JSON.stringify(response.data));
+          window.localStorage.setItem(
+            "isLogined",
+            JSON.stringify(response.data)
+          );
         })
         .catch(() => {
           window.localStorage.removeItem("isLogined");
@@ -54,7 +58,9 @@ const App = () => {
         path="/"
         element={
           <ProtectedRoute isAuthenticated={isLogined}>
-            <Layout />
+            <SummaryItemProvider>
+              <Layout />
+            </SummaryItemProvider>
           </ProtectedRoute>
         }
       >

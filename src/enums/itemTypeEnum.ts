@@ -7,6 +7,6 @@ export type ItemTypeses = (typeof ItemTypes)[number];
 
 // Optional: For label display
 export const ItemTypeLabels: Record<ItemTypeses, string> = {
-  found: "ของที่พบ",
-  lost: "ของที่หาย",
+  found: "เก็บของได้",
+  lost: "แจ้งของหาย",
 };

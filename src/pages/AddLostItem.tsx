@@ -8,6 +8,7 @@ import { Autocomplete } from "../components/forms/Autocomplete";
 import { MuiDateTimeField } from "../components/forms/DateTimeField";
 import moment from "moment";
 import axios from "axios";
+import { useSummaryItemContext } from "../contexts/SummaryItemContext";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -18,9 +19,6 @@ const FormSchema = z.object({
   contact_phone: z.string().min(1, {
     message: "จำเป็นต้องกรอกข้อมูล",
   }),
-  // item_type: z.string().min(1, {
-  //   message: "กรุณาเลือกประเภทสิ่งของ",
-  // }),
   item_type: z
     .object({
       label: z.string().min(1, { message: "กรุณาเลือกประเภทสิ่งของ" }),
@@ -47,6 +45,8 @@ const FormSchema = z.object({
 });
 
 const AddLostItem = () => {
+  const { fetchSummaryItem } = useSummaryItemContext();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -83,6 +83,7 @@ const AddLostItem = () => {
         withCredentials: true,
       })
       .then(() => {
+        fetchSummaryItem()
         form.reset();
       })
       .catch()

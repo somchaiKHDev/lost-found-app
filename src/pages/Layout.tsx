@@ -7,10 +7,16 @@ import {
   MenuItem,
   MenuItems,
 } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon, UserIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3Icon,
+  BellIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import axios from "axios";
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import { useSummaryItemContext } from "../contexts/SummaryItemContext";
+import { useEffect } from "react";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -37,6 +43,11 @@ function classNames(...classes: string[]) {
 
 const Layout = () => {
   const navigate = useNavigate();
+  const { summaryItem, fetchSummaryItem } = useSummaryItemContext();
+
+  useEffect(() => {
+    fetchSummaryItem();
+  }, []);
 
   const signOut = async () => {
     try {
@@ -110,7 +121,7 @@ const Layout = () => {
                         src={user.imageUrl}
                         className="size-8 rounded-full"
                       /> */}
-                      <AccountCircle className="text-white" fontSize="large"/>
+                      <AccountCircle className="text-white" fontSize="large" />
                     </MenuButton>
                   </div>
                   <MenuItems
@@ -214,19 +225,21 @@ const Layout = () => {
         <div className="flex flex-wrap gap-4 p-4">
           <div className="flex flex-col grow items-center gap-2 p-4 border border-gray-300 rounded-lg">
             <span className="text-base">เก็บของได้</span>
-            <span className="text-xl font-medium">34</span>
+            <span className="text-xl font-medium">{summaryItem?.found}</span>
           </div>
           <div className="flex flex-col grow items-center gap-2 p-4 border border-gray-300 rounded-lg">
             <span className="text-base">แจ้งของหาย</span>
-            <span className="text-xl font-medium">21</span>
+            <span className="text-xl font-medium">{summaryItem?.lost}</span>
           </div>
           <div className="flex flex-col grow items-center gap-2 p-4 border border-gray-300 rounded-lg">
             <span className="text-base">คืนแล้ว</span>
-            <span className="text-xl font-medium">8</span>
+            <span className="text-xl font-medium">{summaryItem?.returned}</span>
           </div>
           <div className="flex flex-col grow items-center gap-2 p-4 border border-gray-300 rounded-lg">
             <span className="text-base">รอการตรวจสอบ</span>
-            <span className="text-xl font-medium">5</span>
+            <span className="text-xl font-medium">
+              {summaryItem?.reviewing}
+            </span>
           </div>
         </div>
       </header>

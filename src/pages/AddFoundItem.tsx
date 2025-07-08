@@ -10,6 +10,7 @@ import moment from "moment";
 import { FileUpload } from "../components/forms/FileUpload";
 import axios from "axios";
 import imageCompression from "browser-image-compression";
+import { useSummaryItemContext } from "../contexts/SummaryItemContext";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -17,13 +18,12 @@ const FormSchema = z.object({
   file_upload: z
     .array(z.union([z.instanceof(File), z.string()]))
     .min(1, "กรุณาเลือกรูปภาพประกอบ"),
-  // item_type: z.string().min(1, {
-  //   message: "กรุณาเลือกประเภทสิ่งของ",
-  // }),
-  item_type: z.object({
-    label: z.string().min(1, { message: "กรุณาเลือกประเภทสิ่งของ" }),
-    value: z.string().min(1, { message: "กรุณาเลือกประเภทสิ่งของ" }),
-  }).nullable(),
+  item_type: z
+    .object({
+      label: z.string().min(1, { message: "กรุณาเลือกประเภทสิ่งของ" }),
+      value: z.string().min(1, { message: "กรุณาเลือกประเภทสิ่งของ" }),
+    })
+    .nullable(),
   description: z.string().min(1, {
     message: "จำเป็นต้องกรอกข้อมูล",
   }),
@@ -45,6 +45,8 @@ const FormSchema = z.object({
 });
 
 const AddFoundItem = () => {
+  const { fetchSummaryItem } = useSummaryItemContext();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -58,7 +60,10 @@ const AddFoundItem = () => {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     const formData = new FormData();
-    formData.append("item_type", typeof data.item_type === 'object' ? data?.item_type?.value || "" : "");
+    formData.append(
+      "item_type",
+      typeof data.item_type === "object" ? data?.item_type?.value || "" : ""
+    );
     formData.append("description", data.description);
     formData.append("location", data.location_found);
     formData.append(
@@ -95,6 +100,7 @@ const AddFoundItem = () => {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then(() => {
+        fetchSummaryItem()
         form.reset();
       })
       .catch()
