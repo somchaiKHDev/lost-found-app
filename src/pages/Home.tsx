@@ -22,6 +22,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { useLoadingContext } from "../contexts/LoadingContext";
+import SearchIcon from '@mui/icons-material/Search';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -238,7 +239,7 @@ const Home = () => {
               />
             </div>
             <div className="grow-0">
-              <Button type="submit" variant="outlined">
+              <Button type="submit" variant="contained" color="warning" startIcon={<SearchIcon />}>
                 ค้นหา
               </Button>
             </div>

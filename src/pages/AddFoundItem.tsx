@@ -12,6 +12,7 @@ import axios from "axios";
 import imageCompression from "browser-image-compression";
 import { useSummaryItemContext } from "../contexts/SummaryItemContext";
 import { useLoadingContext } from "../contexts/LoadingContext";
+import SaveIcon from '@mui/icons-material/Save';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -119,7 +120,7 @@ const AddFoundItem = () => {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="flex justify-between mb-4">
           <span className="text-2xl font-medium">เพิ่มรายการของที่พบ</span>
-          <Button type="submit" variant="contained">
+          <Button type="submit" variant="contained" color="warning" startIcon={<SaveIcon />}>
             บันทึก
           </Button>
         </div>
