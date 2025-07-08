@@ -90,13 +90,22 @@ const Home = () => {
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
+    const data = form.getValues();
+    filterItem(data, rowsPerPage, newPage);
   };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
+    const rpp = +event.target.value;
+    const p = 0;
+
+    setRowsPerPage(rpp);
+    setPage(p);
+
+    const data = form.getValues();
+    console.log('data', data)
+    filterItem(data, rpp, p + 1);
   };
 
   const form = useForm<FormType>({
@@ -108,11 +117,15 @@ const Home = () => {
     },
   });
 
-  const onSubmit = (data: typeof form.formState.defaultValues) => {
+  const onSubmit = (data: FormType) => {
+    filterItem(data);
+  };
+
+  const filterItem = (data: FormType, rpp?: number, p?: number) => {
     const start = data?.date_range?.[0];
     const end = data?.date_range?.[1];
 
-    const params: any = {
+    const params: FilterItemParam = {
       type:
         data?.type && typeof data.type === "object"
           ? data.type.value
@@ -126,8 +139,8 @@ const Home = () => {
         : undefined,
       endDate: end ? dayjs(end).tz(TIMEZONE).endOf("day").format() : undefined,
       keyword: data?.keyword || undefined,
-      page: page + 1,
-      limit: rowsPerPage,
+      page: p || 1,
+      limit: rpp || 10,
     };
 
     setLoading(true);
@@ -155,7 +168,7 @@ const Home = () => {
       })
       .catch()
       .finally(() => {
-        setLoading(false)
+        setLoading(false);
       });
   };
 
