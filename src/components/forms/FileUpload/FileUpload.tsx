@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { ControllerRenderProps } from "react-hook-form";
 import { useFormContext, useController } from "react-hook-form";
 import IconButton from "@mui/material/IconButton";
@@ -7,14 +7,19 @@ import { PhotoIcon } from "@heroicons/react/24/solid";
 
 interface TextFieldProps extends ControllerRenderProps {
   name: string;
-  description?: string;
 }
-export const FileUpload: React.FC<TextFieldProps> = ({ name, description }) => {
+export const FileUpload: React.FC<TextFieldProps> = ({ name }) => {
   const { control, setValue } = useFormContext();
   const {
-    field: { onChange },
+    field: { value, onChange },
     fieldState: { error },
   } = useController({ name, control });
+
+  useEffect(() => {
+    if (!value) {
+      setPreviewUrl(null);
+    }
+  }, [value]);
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
