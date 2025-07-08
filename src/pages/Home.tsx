@@ -14,8 +14,8 @@ import Button from "@mui/material/Button";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import { ItemStatusLabels, type ItemStatus } from "../enums/itemStatusEnum";
-import "react-date-range/dist/styles.css"; // main css file
-import "react-date-range/dist/theme/default.css"; // theme css file
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 import { DateRange } from "../components/forms/DateRange";
 import { ItemTypeLabels, type ItemTypeses } from "../enums/itemTypeEnum";
 import dayjs from "dayjs";

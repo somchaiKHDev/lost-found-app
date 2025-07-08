@@ -57,7 +57,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-const Login = (props: { disableCustomTheme?: boolean }) => {
+const Login = () => {
   const navigate = useNavigate();
   const { setLoading } = useLoadingContext();
 

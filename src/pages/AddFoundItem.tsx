@@ -11,7 +11,6 @@ import { FileUpload } from "../components/forms/FileUpload";
 import axios from "axios";
 import imageCompression from "browser-image-compression";
 import { useSummaryItemContext } from "../contexts/SummaryItemContext";
-import dayjs from "dayjs";
 import { useLoadingContext } from "../contexts/LoadingContext";
 
 const apiUrl = import.meta.env.VITE_API_URL;
