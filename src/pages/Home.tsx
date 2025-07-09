@@ -23,9 +23,8 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { useLoadingContext } from "../contexts/LoadingContext";
 import SearchIcon from "@mui/icons-material/Search";
-import {
-  useFullScreenDialogContext,
-} from "../contexts/FullScreenDialogContext";
+import { useFullScreenDialogContext } from "../contexts/FullScreenDialogContext";
+import { rederDataPreview } from "../components/DataPreview/DataPreview";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -88,7 +87,8 @@ interface FormType {
 
 const Home = () => {
   const { setLoading } = useLoadingContext();
-  const { setOpen, setDataRow } = useFullScreenDialogContext();
+  const { setOpen, setComponentRender, setDataRow } =
+    useFullScreenDialogContext();
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -178,7 +178,9 @@ const Home = () => {
   };
 
   const previewDataRow = (dataRow: DataItemInfo) => () => {
-    setDataRow(dataRow)
+    document.activeElement instanceof HTMLElement && document.activeElement.blur();
+    setComponentRender?.(rederDataPreview());
+    setDataRow(dataRow);
     setOpen(true);
   };
 
