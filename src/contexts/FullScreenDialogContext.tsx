@@ -52,7 +52,7 @@ export const FullScreenDialogProvider: React.FC<{
           transition: Transition,
         }}
       >
-        {componentRender ?? null}
+        {componentRender ?? 'Component not found!'}
       </Dialog>
       {children}
     </FullScreenDialogContext.Provider>
