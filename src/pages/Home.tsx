@@ -17,12 +17,15 @@ import { ItemStatusLabels, type ItemStatus } from "../enums/itemStatusEnum";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { DateRange } from "../components/forms/DateRange";
-import { ItemTypeLabels, type ItemTypeses } from "../enums/itemTypeEnum";
+import { ItemTypeLabels, type ItemType } from "../enums/itemTypeEnum";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { useLoadingContext } from "../contexts/LoadingContext";
-import SearchIcon from '@mui/icons-material/Search';
+import SearchIcon from "@mui/icons-material/Search";
+import {
+  useFullScreenDialogContext,
+} from "../contexts/FullScreenDialogContext";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -43,7 +46,7 @@ const columns: readonly Column[] = [
     id: "type",
     label: "ประเภท",
     minWidth: 120,
-    format: (value: ItemTypeses) => {
+    format: (value: ItemType) => {
       return ItemTypeLabels[value];
     },
   },
@@ -85,9 +88,11 @@ interface FormType {
 
 const Home = () => {
   const { setLoading } = useLoadingContext();
+  const { setOpen, setDataRow } = useFullScreenDialogContext();
+
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [rows, setRows] = React.useState<DataItem[]>([]);
+  const [rows, setRows] = React.useState<DataItemInfo[]>([]);
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
@@ -162,7 +167,7 @@ const Home = () => {
   const fetchData = () => {
     setLoading(true);
     axios
-      .get(`${apiUrl}/all-item`, { withCredentials: true })
+      .get<DataItemInfo[]>(`${apiUrl}/all-item`, { withCredentials: true })
       .then((res) => {
         setRows(res.data);
       })
@@ -172,9 +177,10 @@ const Home = () => {
       });
   };
 
-  const previewDataRow = (dataRow: DataItem) => () => {
-    console.log('previewDataRow', dataRow)
-  }
+  const previewDataRow = (dataRow: DataItemInfo) => () => {
+    setDataRow(dataRow)
+    setOpen(true);
+  };
 
   return (
     <>
@@ -242,7 +248,12 @@ const Home = () => {
               />
             </div>
             <div className="grow-0">
-              <Button type="submit" variant="contained" color="warning" startIcon={<SearchIcon />}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="warning"
+                startIcon={<SearchIcon />}
+              >
                 ค้นหา
               </Button>
             </div>
@@ -284,7 +295,14 @@ const Home = () => {
                 rows
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id} className="cursor-pointer" onClick={previewDataRow(row)}>
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={row.id}
+                      className="cursor-pointer"
+                      onClick={previewDataRow(row)}
+                    >
                       {columns.map((column) => {
                         const value = row[column.id];
                         return (
@@ -319,9 +337,7 @@ const Home = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
           labelRowsPerPage="แสดงข้อมูลต่อหน้า:"
           labelDisplayedRows={({ from, to, count }) =>
-            `แสดง ${from} จากทั้งหมด ${
-              count !== -1 ? count : `มากกว่า ${to}`
-            }`
+            `แสดง ${from} จากทั้งหมด ${count !== -1 ? count : `มากกว่า ${to}`}`
           }
         />
       </Paper>

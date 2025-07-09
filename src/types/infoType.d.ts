@@ -1,24 +1,22 @@
-type LookupType = {
-  label: string;
-  value: string;
-};
-
-interface DataItem {
+interface DataItemInfo {
   id: string;
-  type: LookupType | null;
-  image: string;
+  item_type: string;
   description: string;
   location: string;
-  date: string;
+  datetime: string;
+  found_by: string;
+  note: string;
+  create_by: string;
   status: string;
+  imageUrl: string;
+  type: string;
   [key: string]: any;
 }
 
-interface SummaryItem {
+interface SummaryItemInfo {
   found: number;
   lost: number;
   returned: number;
   reviewing: number;
-  matched: number
+  matched: number;
 }
-

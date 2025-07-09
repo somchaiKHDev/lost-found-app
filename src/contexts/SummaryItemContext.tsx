@@ -5,8 +5,8 @@ import { useLoadingContext } from "./LoadingContext";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 interface SummaryItemContextType {
-  summaryItem: SummaryItem | null;
-  setSummaryItem: (item: SummaryItem | null) => void;
+  summaryItem?: SummaryItemInfo;
+  setSummaryItem: (item?: SummaryItemInfo) => void;
   fetchSummaryItem: () => Promise<void>;
 }
 
@@ -18,12 +18,12 @@ export const SummaryItemProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { setLoading } = useLoadingContext();
-  const [summaryItem, setSummaryItem] = useState<SummaryItem | null>(null);
+  const [summaryItem, setSummaryItem] = useState<SummaryItemInfo>();
 
   const fetchSummaryItem = async () => {
     setLoading(true)
     axios
-      .get(`${apiUrl}/summary`, { withCredentials: true })
+      .get<SummaryItemInfo>(`${apiUrl}/summary`, { withCredentials: true })
       .then((res) => {
         setSummaryItem(res.data);
       })

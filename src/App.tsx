@@ -1,10 +1,5 @@
 import "./App.css";
-import {
-  Navigate,
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import ProtectedRoute from "./ProtectedRoute";
@@ -15,6 +10,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { SummaryItemProvider } from "./contexts/SummaryItemContext";
 import { LoadingProvider } from "./contexts/LoadingContext";
+import { FullScreenDialogProvider } from "./contexts/FullScreenDialogContext";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -60,7 +56,9 @@ const App = () => {
           element={
             <ProtectedRoute isAuthenticated={isLogined}>
               <SummaryItemProvider>
-                <Layout />
+                <FullScreenDialogProvider>
+                  <Layout />
+                </FullScreenDialogProvider>
               </SummaryItemProvider>
             </ProtectedRoute>
           }
