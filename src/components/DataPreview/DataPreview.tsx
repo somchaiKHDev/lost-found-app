@@ -132,7 +132,7 @@ export const DataPreview = () => {
             </Grid>
           </Grid>
         </Grid>
-        <CampainPreview />
+        {/* <CampainPreview /> */}
       </Box>
     </>
   );
