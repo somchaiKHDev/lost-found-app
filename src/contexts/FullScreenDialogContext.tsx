@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, type JSX } from "react";
 import Dialog from "@mui/material/Dialog";
 import Slide from "@mui/material/Slide";
 import { type TransitionProps } from "@mui/material/transitions";
-import { DataPreview } from "../components/DataPreview";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -14,15 +13,15 @@ const Transition = React.forwardRef(function Transition(
 });
 
 interface FullScreenDialogContextType {
-  open: boolean;
-  setOpen: (visible: boolean) => void;
+  openDialogFullScreen: boolean;
+  setOpenDialogFullScreen: (visible: boolean) => void;
   setComponentRender?: (component: JSX.Element) => void;
   dataRow?: DataItemType;
-  setDataRow: (dt: DataItemType) => void;
+  setDataRow: (dt?: DataItemType) => void;
 }
 
 interface DataItemType {
-  [key: string]: string;
+  [key: string]: any;
 }
 
 const FullScreenDialogContext = createContext<
@@ -32,21 +31,21 @@ const FullScreenDialogContext = createContext<
 export const FullScreenDialogProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [open, setOpen] = useState<boolean>(false);
+  const [openDialogFullScreen, setOpenDialogFullScreen] = useState<boolean>(false);
   const [dataRow, setDataRow] = useState<DataItemType>();
   const [componentRender, setComponentRender] = useState<JSX.Element>();
 
   const handleClose = () => {
-    setOpen(false);
+    setOpenDialogFullScreen(false);
   };
 
   return (
     <FullScreenDialogContext.Provider
-      value={{ open, setOpen, dataRow, setDataRow, setComponentRender }}
+      value={{ openDialogFullScreen, setOpenDialogFullScreen, dataRow, setDataRow, setComponentRender }}
     >
       <Dialog
         fullScreen
-        open={open}
+        open={openDialogFullScreen}
         onClose={handleClose}
         slots={{
           transition: Transition,
@@ -63,7 +62,7 @@ export const useFullScreenDialogContext = () => {
   const context = useContext(FullScreenDialogContext);
   if (!context)
     throw new Error(
-      "useFullScreenDialogContext must be used within a UserProvider"
+      "useFullScreenDialogContext must be used within a FullScreenDialogProvider"
     );
   return context;
 };

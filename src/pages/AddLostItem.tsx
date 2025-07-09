@@ -62,7 +62,7 @@ const AddLostItem = () => {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  const onSubmit = (data: z.infer<typeof FormSchema>) => {
     let params = {
       fullname: data.fullname,
       contact_phone: data.contact_phone,

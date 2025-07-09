@@ -87,7 +87,7 @@ interface FormType {
 
 const Home = () => {
   const { setLoading } = useLoadingContext();
-  const { setOpen, setComponentRender, setDataRow } =
+  const { setOpenDialogFullScreen, setComponentRender, setDataRow } =
     useFullScreenDialogContext();
 
   const [page, setPage] = React.useState(0);
@@ -178,10 +178,11 @@ const Home = () => {
   };
 
   const previewDataRow = (dataRow: DataItemInfo) => () => {
-    document.activeElement instanceof HTMLElement && document.activeElement.blur();
+    document.activeElement instanceof HTMLElement &&
+      document.activeElement.blur();
     setComponentRender?.(rederDataPreview());
     setDataRow(dataRow);
-    setOpen(true);
+    setOpenDialogFullScreen(true);
   };
 
   return (

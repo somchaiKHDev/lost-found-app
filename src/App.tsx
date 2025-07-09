@@ -11,6 +11,7 @@ import axios from "axios";
 import { SummaryItemProvider } from "./contexts/SummaryItemContext";
 import { LoadingProvider } from "./contexts/LoadingContext";
 import { FullScreenDialogProvider } from "./contexts/FullScreenDialogContext";
+import { DialogProvider } from "./contexts/DialogContext";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -56,9 +57,11 @@ const App = () => {
           element={
             <ProtectedRoute isAuthenticated={isLogined}>
               <SummaryItemProvider>
-                <FullScreenDialogProvider>
-                  <Layout />
-                </FullScreenDialogProvider>
+                <DialogProvider>
+                  <FullScreenDialogProvider>
+                    <Layout />
+                  </FullScreenDialogProvider>
+                </DialogProvider>
               </SummaryItemProvider>
             </ProtectedRoute>
           }

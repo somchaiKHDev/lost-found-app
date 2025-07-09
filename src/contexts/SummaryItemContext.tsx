@@ -44,6 +44,6 @@ export const SummaryItemProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export const useSummaryItemContext = () => {
   const context = useContext(SummaryItemContext);
-  if (!context) throw new Error('useSummaryItemContext must be used within a UserProvider');
+  if (!context) throw new Error('useSummaryItemContext must be used within a SummaryItemProvider');
   return context;
 };

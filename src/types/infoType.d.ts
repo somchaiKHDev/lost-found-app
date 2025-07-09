@@ -20,3 +20,13 @@ interface SummaryItemInfo {
   reviewing: number;
   matched: number;
 }
+
+interface CampainInfo {
+  id: string
+  caseId: string
+  subject: string
+  description: string;
+  datetime: string;
+  create_by: string;
+  imageUrl: string;
+}

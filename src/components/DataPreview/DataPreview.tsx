@@ -7,30 +7,35 @@ import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import CardMedia from "@mui/material/CardMedia";
-import { styled } from "@mui/material/styles";
-import Paper from "@mui/material/Paper";
-import Divider from "@mui/material/Divider";
 import { useFullScreenDialogContext } from "../../contexts/FullScreenDialogContext";
 import { ItemStatusLabels } from "../../enums/itemStatusEnum";
 import { ItemTypeLabels } from "../../enums/itemTypeEnum";
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  color: theme.palette.text.secondary,
-  ...theme.applyStyles("dark", {
-    backgroundColor: "#1A2027",
-  }),
-}));
+import { Item } from "../shared/PaperItem";
+import { useDialogContext } from "../../contexts/DialogContext";
+import { rederCampain } from "../Campain/Campain";
+import { CampainPreview } from "../CampainPreview";
 
 export const DataPreview = () => {
-  const { dataRow, setOpen } = useFullScreenDialogContext();
-  const dataItem = dataRow as DataItemInfo
+  const { dataRow, setDataRow, setOpenDialogFullScreen } =
+    useFullScreenDialogContext();
+  const { setOpenDialog, setComponentRender } = useDialogContext();
+  const dataItem = dataRow as DataItemInfo;
 
-  const handleClose = () => {
-    document.activeElement instanceof HTMLElement && document.activeElement.blur();
-    setOpen(false);
+  const handleCloseDialogFullScreen = () => {
+    document.activeElement instanceof HTMLElement &&
+      document.activeElement.blur();
+    setOpenDialogFullScreen(false);
+  };
+
+  const handleOpenDialog = () => {
+    document.activeElement instanceof HTMLElement &&
+      document.activeElement.blur();
+    setOpenDialog(true);
+    setComponentRender?.(rederCampain({ dataItem, bindDataCampain }));
+  };
+
+  const bindDataCampain = (dataCampain: CampainInfo) => {
+    setDataRow({ ...dataItem, dataCampain });
   };
 
   return (
@@ -40,7 +45,7 @@ export const DataPreview = () => {
           <IconButton
             edge="start"
             color="inherit"
-            onClick={handleClose}
+            onClick={handleCloseDialogFullScreen}
             aria-label="close"
           >
             <CloseIcon />
@@ -48,9 +53,11 @@ export const DataPreview = () => {
           <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
             ข้อมูล
           </Typography>
-          <Button autoFocus color="inherit" onClick={handleClose}>
-            สร้างประกาศ
-          </Button>
+          {!dataItem?.dataCampain ? (
+            <Button autoFocus color="inherit" onClick={handleOpenDialog}>
+              สร้างประกาศ
+            </Button>
+          ) : null}
         </Toolbar>
       </AppBar>
       <Box component={Typography} variant="h6" p={2}>
@@ -125,17 +132,12 @@ export const DataPreview = () => {
             </Grid>
           </Grid>
         </Grid>
-        <Box py={2}>
-          <Divider textAlign="center">ข้อมูลประกาศ</Divider>
-          <Item>
-            <Typography>{dataItem?.note || "-"}</Typography>
-          </Item>
-        </Box>
-      </Box>{" "}
+        <CampainPreview />
+      </Box>
     </>
   );
 };
 
 export const rederDataPreview = () => {
-    return <DataPreview />
-}
+  return <DataPreview />;
+};
