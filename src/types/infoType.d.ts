@@ -10,6 +10,7 @@ interface DataItemInfo {
   status: string;
   imageUrl: string;
   type: string;
+  hasCampain: boolean;
   [key: string]: any;
 }
 
@@ -22,9 +23,9 @@ interface SummaryItemInfo {
 }
 
 interface CampainInfo {
-  id: string
-  caseId: string
-  subject: string
+  id: string;
+  caseId: string;
+  subject: string;
   description: string;
   datetime: string;
   create_by: string;

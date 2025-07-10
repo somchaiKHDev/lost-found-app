@@ -60,6 +60,7 @@ export const Campain: React.FC<CampainProps> = ({
       datetime: new Date().toISOString(),
       create_by: "",
       imageUrl: dataItem.imageUrl,
+      type: dataItem.type
     };
 
     const localStorage = window.localStorage.getItem("isLogined");

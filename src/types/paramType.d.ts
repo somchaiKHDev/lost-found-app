@@ -15,4 +15,5 @@ interface AddCampainsParam {
   datetime: string;
   create_by: string;
   imageUrl: string
+  type: string
 }

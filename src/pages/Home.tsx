@@ -150,7 +150,7 @@ const Home = () => {
 
     setLoading(true);
     axios
-      .post(`${apiUrl}/filter-item`, params, { withCredentials: true })
+      .post<DataItemInfo[]>(`${apiUrl}/filter-item`, params, { withCredentials: true })
       .then((res) => {
         setRows(res.data);
       })

@@ -13,7 +13,6 @@ import { ItemTypeLabels } from "../../enums/itemTypeEnum";
 import { Item } from "../shared/PaperItem";
 import { useDialogContext } from "../../contexts/DialogContext";
 import { rederCampain } from "../Campain/Campain";
-import { CampainPreview } from "../CampainPreview";
 
 export const DataPreview = () => {
   const { dataRow, setDataRow, setOpenDialogFullScreen } =
@@ -35,7 +34,9 @@ export const DataPreview = () => {
   };
 
   const bindDataCampain = (dataCampain: CampainInfo) => {
-    setDataRow({ ...dataItem, dataCampain });
+    if (dataCampain) {
+      setDataRow({ ...dataItem, hasCampain: true });
+    }
   };
 
   return (
@@ -53,11 +54,15 @@ export const DataPreview = () => {
           <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
             ข้อมูล
           </Typography>
-          {!dataItem?.dataCampain ? (
+          {dataItem?.hasCampain ? (
+            <Button autoFocus color="inherit" onClick={() => {}}>
+              ดูประกาศ
+            </Button>
+          ) : (
             <Button autoFocus color="inherit" onClick={handleOpenDialog}>
               สร้างประกาศ
             </Button>
-          ) : null}
+          )}
         </Toolbar>
       </AppBar>
       <Box component={Typography} variant="h6" p={2}>
