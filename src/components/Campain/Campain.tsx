@@ -9,9 +9,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField } from "../forms/TextField";
 import { TextFieldArea } from "../forms/TextFieldArea";
-import { useLoadingContext } from "../../contexts/LoadingContext";
 import axios from "axios";
-import { useFullScreenDialogContext } from "../../contexts/FullScreenDialogContext";
 import { useState } from "react";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -35,13 +33,15 @@ export const Campain: React.FC<CampainProps> = ({
   dataItem,
   bindDataCampain,
 }) => {
-  const { setOpenDialog } = useDialogContext();
+  const { setConfigDialog } = useDialogContext();
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleCloseDialog = () => {
     document.activeElement instanceof HTMLElement &&
       document.activeElement.blur();
-    setOpenDialog(false);
+    setConfigDialog({
+      visible: false,
+    });
   };
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -60,7 +60,7 @@ export const Campain: React.FC<CampainProps> = ({
       datetime: new Date().toISOString(),
       create_by: "",
       imageUrl: dataItem.imageUrl,
-      type: dataItem.type
+      type: dataItem.type,
     };
 
     const localStorage = window.localStorage.getItem("isLogined");

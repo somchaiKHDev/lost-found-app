@@ -1,10 +1,20 @@
 import React, { createContext, useContext, useState, type JSX } from "react";
 import Dialog from "@mui/material/Dialog";
+import type { Breakpoint } from "@mui/material/styles";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface DialogContextType {
   openDialog: boolean;
-  setOpenDialog: (visible: boolean) => void;
+  setConfigDialog: (config: ConfigDialogType) => void;
   setComponentRender?: (component: JSX.Element) => void;
+}
+
+interface ConfigDialogType {
+  visible?: boolean;
+  fullWidth?: boolean;
+  maxWidth?: false | Breakpoint;
+  scroll?: "body" | "paper";
 }
 
 const DialogContext = createContext<DialogContextType | undefined>(undefined);
@@ -12,18 +22,40 @@ const DialogContext = createContext<DialogContextType | undefined>(undefined);
 export const DialogProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [componentRender, setComponentRender] = useState<JSX.Element>();
+  const [configDialog, setConfigDialog] = useState<ConfigDialogType>();
 
   const handleClose = () => {
-    setOpenDialog(false);
+    setConfigDialog(undefined);
   };
 
   return (
     <DialogContext.Provider
-      value={{ openDialog, setOpenDialog, setComponentRender }}
+      value={{
+        openDialog: configDialog?.visible || false,
+        setConfigDialog,
+        setComponentRender,
+      }}
     >
-      <Dialog fullWidth maxWidth="sm" open={openDialog} onClose={handleClose}>
+      <Dialog
+        fullWidth={configDialog?.fullWidth || false}
+        maxWidth={configDialog?.maxWidth || "sm"}
+        open={configDialog?.visible || false}
+        onClose={handleClose}
+        scroll={configDialog?.scroll}
+      >
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={(theme) => ({
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: theme.palette.grey[500],
+          })}
+        >
+          <CloseIcon />
+        </IconButton>
         {componentRender ?? "Component not found!"}
       </Dialog>
       {children}

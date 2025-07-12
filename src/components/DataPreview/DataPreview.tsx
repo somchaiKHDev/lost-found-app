@@ -13,11 +13,12 @@ import { ItemTypeLabels } from "../../enums/itemTypeEnum";
 import { Item } from "../shared/PaperItem";
 import { useDialogContext } from "../../contexts/DialogContext";
 import { rederCampain } from "../Campain/Campain";
+import { rederCampainPreview } from "../CampainPreview/CampainPreview";
 
 export const DataPreview = () => {
   const { dataRow, setDataRow, setOpenDialogFullScreen } =
     useFullScreenDialogContext();
-  const { setOpenDialog, setComponentRender } = useDialogContext();
+  const { setConfigDialog, setComponentRender } = useDialogContext();
   const dataItem = dataRow as DataItemInfo;
 
   const handleCloseDialogFullScreen = () => {
@@ -29,7 +30,11 @@ export const DataPreview = () => {
   const handleOpenDialog = () => {
     document.activeElement instanceof HTMLElement &&
       document.activeElement.blur();
-    setOpenDialog(true);
+    setConfigDialog({
+      visible: true,
+      maxWidth: "md",
+      fullWidth: true,
+    });
     setComponentRender?.(rederCampain({ dataItem, bindDataCampain }));
   };
 
@@ -37,6 +42,17 @@ export const DataPreview = () => {
     if (dataCampain) {
       setDataRow({ ...dataItem, hasCampain: true });
     }
+  };
+
+  const handlePreviewCampain = () => {
+    document.activeElement instanceof HTMLElement &&
+      document.activeElement.blur();
+    setConfigDialog({
+      visible: true,
+      maxWidth: "md",
+      scroll: "body",
+    });
+    setComponentRender?.(rederCampainPreview({ id: dataItem.id }));
   };
 
   return (
@@ -55,7 +71,7 @@ export const DataPreview = () => {
             ข้อมูล
           </Typography>
           {dataItem?.hasCampain ? (
-            <Button autoFocus color="inherit" onClick={() => {}}>
+            <Button autoFocus color="inherit" onClick={handlePreviewCampain}>
               ดูประกาศ
             </Button>
           ) : (
