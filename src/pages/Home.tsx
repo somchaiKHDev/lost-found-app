@@ -286,9 +286,10 @@ const Home = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.length === 0 ||
+              {/* ||
               rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .length === 0 ? (
+                .length === 0 */}
+              {rows.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={columns.length} align="center">
                     ไม่พบข้อมูล
