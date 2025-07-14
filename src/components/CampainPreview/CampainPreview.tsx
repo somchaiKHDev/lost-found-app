@@ -6,12 +6,14 @@ import { useFullScreenDialogContext } from "../../contexts/FullScreenDialogConte
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useLoadingContext } from "../../contexts/LoadingContext";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import CardMedia from "@mui/material/CardMedia";
+import CampaignIcon from "@mui/icons-material/Campaign";
+import Stack from "@mui/material/Stack";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -58,58 +60,63 @@ export const CampainPreview: React.FC<CampainPreviewProps> = ({ id }) => {
 
       {!loading ? (
         <>
-          <DialogTitle>ประกาศ</DialogTitle>
+          <DialogTitle>
+            <Stack
+              flexDirection="row"
+              justifyContent="center"
+              alignItems="center"
+              gap={2}
+            >
+              <CampaignIcon fontSize="large" />
+              <Typography variant="h3">ประกาศ</Typography>
+            </Stack>
+          </DialogTitle>
           <DialogContent>
-            <Box py={2}>
-              <Grid container justifyContent="center" spacing={2}>
-                <Grid item xs={4}>
-                  <CardMedia
-                    component="img"
-                    height="194"
-                    image={dataCampain?.imageUrl}
-                    alt="Paella dish"
-                    sx={{ borderRadius: "1rem" }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="body2">ประกาศเรื่อง</Typography>
-                  <Item>
-                    <Typography>{dataCampain?.subject}</Typography>
-                  </Item>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="body2">รายละเอียด</Typography>
-                  <Item>
+            <Grid container spacing={1}>
+              <Grid size={{ xs: "grow" }}>
+                <CardMedia
+                  component="img"
+                  height="194"
+                  image={dataCampain?.imageUrl}
+                  alt="Paella dish"
+                  sx={{ borderRadius: "1rem" }}
+                />
+              </Grid>
+              <Grid size={{ xs: 7 }}>
+                <Box sx={{ height: "100%" }}>
+                  <Item sx={{ height: "inherit" }}>
                     <Typography>{dataCampain?.description}</Typography>
                   </Item>
-                </Grid>
-                <Grid item xs>
-                  <Typography variant="body2">ประกาศเมื่อ</Typography>
-                  <Item>
-                    <Typography>
-                      {dataCampain?.datetime
-                        ? new Date(dataCampain.datetime).toLocaleString(
-                            "th-TH",
-                            {
-                              day: "numeric",
-                              month: "long",
-                              year: "numeric",
-                              hour: "numeric",
-                              minute: "numeric",
-                            }
-                          ) + " น."
-                        : "-"}
-                    </Typography>
-                  </Item>
-                </Grid>
-                <Grid item xs>
-                  <Typography variant="body2">สร้างประกาศโดย</Typography>
-                  <Item>
-                    <Typography>{dataCampain?.create_by}</Typography>
-                  </Item>
-                </Grid>
+                </Box>
               </Grid>
-            </Box>
+              <Grid size={{ xs: 12 }}>
+                <Item>
+                  <Grid container spacing={2}>
+                    <Grid size={{ xs: "grow" }}>
+                      <Typography variant="body2">ประกาศเมื่อ</Typography>
+                      <Typography>
+                        {dataCampain?.datetime
+                          ? new Date(dataCampain.datetime).toLocaleString(
+                              "th-TH",
+                              {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                                hour: "numeric",
+                                minute: "numeric",
+                              }
+                            ) + " น."
+                          : "-"}
+                      </Typography>
+                    </Grid>
+                    <Grid size={{ xs: 7 }}>
+                      <Typography variant="body2">ประกาศโดย</Typography>
+                      <Typography>{dataCampain?.create_by}</Typography>
+                    </Grid>
+                  </Grid>
+                </Item>
+              </Grid>
+            </Grid>
           </DialogContent>
         </>
       ) : null}
