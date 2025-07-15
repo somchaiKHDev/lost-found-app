@@ -8,22 +8,29 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid2";
 import CardMedia from "@mui/material/CardMedia";
 import { useFullScreenDialogContext } from "../../contexts/FullScreenDialogContext";
-import { ItemStatuses, ItemStatusLabels } from "../../enums/itemStatusEnum";
+import { ItemStatusLabels } from "../../enums/itemStatusEnum";
 import { ItemTypeLabels } from "../../enums/itemTypeEnum";
 import { Item } from "../shared/PaperItem";
 import { useDialogContext } from "../../contexts/DialogContext";
 import { rederCampain } from "../Campain/Campain";
 import { rederCampainPreview } from "../CampainPreview/CampainPreview";
-import DialogActions from "@mui/material/DialogActions";
 import { ItemStatusLookups } from "../../hooks/lookup";
 import Stack from "@mui/material/Stack";
 import { rederFormConfirm } from "../FormConfirm/FormConfirm";
 import { rederConfirmAction } from "../ConfirmAction/ConfirmAction";
+import axios from "axios";
+import { useState } from "react";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export const DataPreview = () => {
   const { dataRow, setDataRow, setOpenDialogFullScreen } =
     useFullScreenDialogContext();
   const { setConfigDialog, setComponentRender } = useDialogContext();
+  const [loading, setLoading] = useState<boolean>(false);
+
   const dataItem = dataRow as DataItemInfo;
 
   const handleCloseDialogFullScreen = () => {
@@ -80,6 +87,10 @@ export const DataPreview = () => {
         list = ["pending", "matched"];
         break;
 
+      case "reviewing":
+        list = ["pending", "matched", "reviewing"];
+        break;
+
       default:
         list = [];
         break;
@@ -122,11 +133,41 @@ export const DataPreview = () => {
   };
 
   const submitConfirm = () => {
-    console.log("submitConfirm");
+    const params = {
+      id: dataItem.id,
+      type: dataItem.type,
+    };
+    setLoading(true);
+    setConfigDialog({
+      visible: false,
+    });
+    axios
+      .post(`${apiUrl}/change-reviewing-status`, params, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        setDataRow(res.data);
+      })
+      .catch((error) => {
+        console.error("Change status failed:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
     <>
+      <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: 99 })}
+        open={loading}
+        onClick={() => {
+          setLoading(false);
+        }}
+      >
+        <CircularProgress color="warning" />
+      </Backdrop>
+
       <AppBar sx={{ position: "relative", bgcolor: "#1e2939" }}>
         <Toolbar>
           <IconButton
