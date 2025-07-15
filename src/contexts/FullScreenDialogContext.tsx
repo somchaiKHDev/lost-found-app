@@ -31,7 +31,8 @@ const FullScreenDialogContext = createContext<
 export const FullScreenDialogProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [openDialogFullScreen, setOpenDialogFullScreen] = useState<boolean>(false);
+  const [openDialogFullScreen, setOpenDialogFullScreen] =
+    useState<boolean>(false);
   const [dataRow, setDataRow] = useState<DataItemType>();
   const [componentRender, setComponentRender] = useState<JSX.Element>();
 
@@ -41,7 +42,13 @@ export const FullScreenDialogProvider: React.FC<{
 
   return (
     <FullScreenDialogContext.Provider
-      value={{ openDialogFullScreen, setOpenDialogFullScreen, dataRow, setDataRow, setComponentRender }}
+      value={{
+        openDialogFullScreen,
+        setOpenDialogFullScreen,
+        dataRow,
+        setDataRow,
+        setComponentRender,
+      }}
     >
       <Dialog
         fullScreen
@@ -51,7 +58,7 @@ export const FullScreenDialogProvider: React.FC<{
           transition: Transition,
         }}
       >
-        {componentRender ?? 'Component not found!'}
+        {componentRender ?? "Component not found!"}
       </Dialog>
       {children}
     </FullScreenDialogContext.Provider>

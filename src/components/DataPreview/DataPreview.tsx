@@ -19,9 +19,10 @@ import Stack from "@mui/material/Stack";
 import { rederFormConfirm } from "../FormConfirm/FormConfirm";
 import { rederConfirmAction } from "../ConfirmAction/ConfirmAction";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useNavigate } from "react-router-dom";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -30,8 +31,18 @@ export const DataPreview = () => {
     useFullScreenDialogContext();
   const { setConfigDialog, setComponentRender } = useDialogContext();
   const [loading, setLoading] = useState<boolean>(false);
+  const [isChangeStatus, setIsChangeStatus] = useState(false);
 
   const dataItem = dataRow as DataItemInfo;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    return () => {
+      if (isChangeStatus) {
+        navigate(0);
+      }
+    };
+  }, [isChangeStatus]);
 
   const handleCloseDialogFullScreen = () => {
     document.activeElement instanceof HTMLElement &&
@@ -92,7 +103,7 @@ export const DataPreview = () => {
         break;
 
       default:
-        list = [];
+        list = ["pending", "matched", "returned", "cancelled", "reviewing"];
         break;
     }
     return [...ItemStatusLookups(list)];
@@ -111,11 +122,15 @@ export const DataPreview = () => {
     switch (key) {
       case "returned":
         title = "ยืนยันสถานะคืนเเล้ว";
-        setComponentRender?.(rederFormConfirm({ title, submitFormData }));
+        setComponentRender?.(
+          rederFormConfirm({ title, submitFormData: submitReturnedFormData })
+        );
         break;
       case "cancelled":
         title = "ยืนยันสถานะยกเลิก";
-        setComponentRender?.(rederFormConfirm({ title, submitFormData }));
+        setComponentRender?.(
+          rederFormConfirm({ title, submitFormData: submitCancelledFormData })
+        );
         break;
       case "reviewing":
         title = "ยืนยันสถานะกำลังตรวจสอบ";
@@ -128,8 +143,56 @@ export const DataPreview = () => {
     }
   };
 
-  const submitFormData = (data: any) => {
-    console.log("submitFormData", data);
+  const submitReturnedFormData = (data: any) => {
+    const params = {
+      id: dataItem.id,
+      type: dataItem.type,
+      remark: data.remark,
+    };
+    setLoading(true);
+    setConfigDialog({
+      visible: false,
+    });
+    axios
+      .post(`${apiUrl}/change-returned-status`, params, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        setDataRow(res.data);
+        setIsChangeStatus(true);
+      })
+      .catch((error) => {
+        console.error("Change status failed:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const submitCancelledFormData = (data: any) => {
+    const params = {
+      id: dataItem.id,
+      type: dataItem.type,
+      remark: data.remark,
+    };
+    setLoading(true);
+    setConfigDialog({
+      visible: false,
+    });
+    axios
+      .post(`${apiUrl}/change-cancelled-status`, params, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        setDataRow(res.data);
+        setIsChangeStatus(true);
+      })
+      .catch((error) => {
+        console.error("Change status failed:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const submitConfirm = () => {
@@ -147,6 +210,7 @@ export const DataPreview = () => {
       })
       .then((res) => {
         setDataRow(res.data);
+        setIsChangeStatus(true);
       })
       .catch((error) => {
         console.error("Change status failed:", error);
