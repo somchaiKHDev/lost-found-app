@@ -159,7 +159,7 @@ export const DataPreview = () => {
   return (
     <>
       <Backdrop
-        sx={(theme) => ({ color: "#fff", zIndex: 99 })}
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
         open={loading}
         onClick={() => {
           setLoading(false);
