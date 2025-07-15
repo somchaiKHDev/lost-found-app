@@ -25,6 +25,7 @@ import { useLoadingContext } from "../contexts/LoadingContext";
 import SearchIcon from "@mui/icons-material/Search";
 import { useFullScreenDialogContext } from "../contexts/FullScreenDialogContext";
 import { rederDataPreview } from "../components/DataPreview/DataPreview";
+import { ItemStatusLookups, ItemTypeLookups } from "../hooks/lookup";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -150,7 +151,9 @@ const Home = () => {
 
     setLoading(true);
     axios
-      .post<DataItemInfo[]>(`${apiUrl}/filter-item`, params, { withCredentials: true })
+      .post<DataItemInfo[]>(`${apiUrl}/filter-item`, params, {
+        withCredentials: true,
+      })
       .then((res) => {
         setRows(res.data);
       })
@@ -200,10 +203,7 @@ const Home = () => {
                 render={({ field }) => (
                   <Autocomplete
                     placeholder="ประเภทของรายการ"
-                    options={[
-                      { label: "แจ้งของหาย", value: "lost" },
-                      { label: "เก็บของได้", value: "found" },
-                    ]}
+                    options={ItemTypeLookups()}
                     {...field}
                   />
                 )}
@@ -216,14 +216,7 @@ const Home = () => {
                 render={({ field }) => (
                   <Autocomplete
                     placeholder="สถานะ"
-                    options={[
-                      { label: "กำลังรอดำเนินการ", value: "pending" },
-                      { label: "จับคู่สำเร็จ", value: "matched" },
-                      { label: "คืนแล้ว", value: "returned" },
-                      { label: "หมดอายุ", value: "expired" },
-                      { label: "ยกเลิกแล้ว", value: "cancelled" },
-                      { label: "กำลังตรวจสอบ", value: "reviewing" },
-                    ]}
+                    options={ItemStatusLookups()}
                     {...field}
                   />
                 )}
@@ -260,7 +253,7 @@ const Home = () => {
                 ค้นหา
               </Button>
             </div>
-          </div>
+          </div> 
         </form>
       </FormProvider>
 

@@ -5,15 +5,20 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Grid2";
 import CardMedia from "@mui/material/CardMedia";
 import { useFullScreenDialogContext } from "../../contexts/FullScreenDialogContext";
-import { ItemStatusLabels } from "../../enums/itemStatusEnum";
+import { ItemStatuses, ItemStatusLabels } from "../../enums/itemStatusEnum";
 import { ItemTypeLabels } from "../../enums/itemTypeEnum";
 import { Item } from "../shared/PaperItem";
 import { useDialogContext } from "../../contexts/DialogContext";
 import { rederCampain } from "../Campain/Campain";
 import { rederCampainPreview } from "../CampainPreview/CampainPreview";
+import DialogActions from "@mui/material/DialogActions";
+import { ItemStatusLookups } from "../../hooks/lookup";
+import Stack from "@mui/material/Stack";
+import { rederFormConfirm } from "../FormConfirm/FormConfirm";
+import { rederConfirmAction } from "../ConfirmAction/ConfirmAction";
 
 export const DataPreview = () => {
   const { dataRow, setDataRow, setOpenDialogFullScreen } =
@@ -55,6 +60,71 @@ export const DataPreview = () => {
     setComponentRender?.(rederCampainPreview({ id: dataItem.id }));
   };
 
+  const getColorButton = (key: string) => {
+    switch (key) {
+      case "returned":
+        return "success";
+      case "cancelled":
+        return "error";
+      case "reviewing":
+        return "inherit";
+      default:
+        return;
+    }
+  };
+
+  const listButtonGroup = () => {
+    let list: string[] = [];
+    switch (dataItem.status) {
+      case "pending":
+        list = ["pending", "matched"];
+        break;
+
+      default:
+        list = [];
+        break;
+    }
+    return [...ItemStatusLookups(list)];
+  };
+
+  const actionConfirm = (key: string) => () => {
+    let title = "";
+    document.activeElement instanceof HTMLElement &&
+      document.activeElement.blur();
+    setConfigDialog({
+      visible: true,
+      maxWidth: "sm",
+      fullWidth: true,
+    });
+
+    switch (key) {
+      case "returned":
+        title = "ยืนยันสถานะคืนเเล้ว";
+        setComponentRender?.(rederFormConfirm({ title, submitFormData }));
+        break;
+      case "cancelled":
+        title = "ยืนยันสถานะยกเลิก";
+        setComponentRender?.(rederFormConfirm({ title, submitFormData }));
+        break;
+      case "reviewing":
+        title = "ยืนยันสถานะกำลังตรวจสอบ";
+        setComponentRender?.(
+          rederConfirmAction({ title, submit: submitConfirm })
+        );
+        break;
+      default:
+        break;
+    }
+  };
+
+  const submitFormData = (data: any) => {
+    console.log("submitFormData", data);
+  };
+
+  const submitConfirm = () => {
+    console.log("submitConfirm");
+  };
+
   return (
     <>
       <AppBar sx={{ position: "relative", bgcolor: "#1e2939" }}>
@@ -82,8 +152,12 @@ export const DataPreview = () => {
         </Toolbar>
       </AppBar>
       <Box component={Typography} variant="h6" p={2}>
-        <Grid container spacing={2}>
-          <Grid item xs={4}>
+        <Grid
+          container
+          spacing={2}
+          justifyContent={{ sm: "center", md: "flex-start" }}
+        >
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <CardMedia
               component="img"
               height="194"
@@ -92,16 +166,27 @@ export const DataPreview = () => {
               sx={{ borderRadius: "1rem" }}
             />
           </Grid>
-          <Grid container spacing={2} item xs>
-            <Grid item xs={12}>
-              <Typography variant="h5">
-                สถานะ :{" "}
-                {ItemStatusLabels[
-                  dataItem?.status as keyof typeof ItemStatusLabels
-                ] ?? "-"}
-              </Typography>
+          <Grid
+            container
+            direction="column"
+            spacing={2}
+            size={{ xs: 12, md: 8 }}
+          >
+            <Grid
+              container
+              direction={{ xs: "column", lg: "row" }}
+              justifyContent="space-between"
+            >
+              <Grid>
+                <Typography variant="h5">
+                  สถานะ :{" "}
+                  {ItemStatusLabels[
+                    dataItem?.status as keyof typeof ItemStatusLabels
+                  ] ?? "-"}
+                </Typography>
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
+            <Grid>
               <Typography variant="body2">ประเภทสิ่งของ</Typography>
               <Item>
                 <Typography>
@@ -111,19 +196,19 @@ export const DataPreview = () => {
                 </Typography>
               </Item>
             </Grid>
-            <Grid item xs={12}>
+            <Grid>
               <Typography variant="body2">รายละเอียด</Typography>
               <Item>
                 <Typography>{dataItem?.description || "-"}</Typography>
               </Item>
             </Grid>
-            <Grid item xs={12}>
+            <Grid>
               <Typography variant="body2">สถานที่พบเจอ</Typography>
               <Item>
                 <Typography>{dataItem?.location || "-"}</Typography>
               </Item>
             </Grid>
-            <Grid item xs={12}>
+            <Grid>
               <Typography variant="body2">วัน/เวลาที่พบ</Typography>
               <Item>
                 <Typography>
@@ -139,13 +224,13 @@ export const DataPreview = () => {
                 </Typography>
               </Item>
             </Grid>
-            <Grid item xs={12}>
+            <Grid>
               <Typography variant="body2">ผู้พบ (ถ้ามี)</Typography>
               <Item>
                 <Typography>{dataItem?.found_by || "-"}</Typography>
               </Item>
             </Grid>
-            <Grid item xs={12}>
+            <Grid>
               <Typography variant="body2">หมายเหตุเพิ่มเติม</Typography>
               <Item>
                 <Typography>{dataItem?.note || "-"}</Typography>
@@ -153,8 +238,20 @@ export const DataPreview = () => {
             </Grid>
           </Grid>
         </Grid>
-        {/* <CampainPreview /> */}
       </Box>
+      <Stack direction={{ xs: "column", sm: "row" }} gap={1} p={2} pt={0}>
+        {listButtonGroup().map((item) => (
+          <Button
+            variant="contained"
+            color={getColorButton(item.value)}
+            key={item.value}
+            sx={{ width: { xs: "100%", sm: "150px" } }}
+            onClick={actionConfirm(item.value)}
+          >
+            {item.label}
+          </Button>
+        ))}
+      </Stack>
     </>
   );
 };

@@ -1,11 +1,8 @@
 import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
 import { Item } from "../shared/PaperItem";
 import Typography from "@mui/material/Typography";
-import { useFullScreenDialogContext } from "../../contexts/FullScreenDialogContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useLoadingContext } from "../../contexts/LoadingContext";
 import Grid from "@mui/material/Grid2";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -21,8 +18,6 @@ type CampainPreviewProps = {
   id: string;
 };
 export const CampainPreview: React.FC<CampainPreviewProps> = ({ id }) => {
-  // const { dataRow, setDataRow } = useFullScreenDialogContext();
-  // const dataCampain = dataRow?.dataCampain as CampainInfo | undefined;
   const [dataCampain, setDataCampain] = useState<CampainInfo>();
 
   const [loading, setLoading] = useState<boolean>(false);

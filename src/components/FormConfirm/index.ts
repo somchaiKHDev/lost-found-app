@@ -1,0 +1,1 @@
+export { FormConfirm } from "./FormConfirm";
