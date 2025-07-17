@@ -1,6 +1,5 @@
 {
   "hosting": {
-    "target": "lost-foun-service",
     "public": "dist",
     "ignore": [
       "firebase.json",

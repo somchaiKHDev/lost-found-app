@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "lost-found-app-219be"
-  }
+  },
+  "targets": {
+    "lost-found-app-219be": {
+      "hosting": {
+        "lost-foun-service": [
+          "lost-found-app-219be.web.app"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
