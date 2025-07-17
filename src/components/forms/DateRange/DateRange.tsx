@@ -18,8 +18,8 @@ import { DateRange as LibDateRange } from "react-date-range";
 import { th } from "date-fns/locale";
 
 type DateRangeType = {
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate?: Date;
+  endDate?: Date;
   key: string;
 };
 
@@ -43,8 +43,8 @@ export const DateRange: React.FC<DateRangeProps> = ({
 
   const [dateRange, setDateRange] = useState<DateRangeType[]>([
     {
-      startDate: field.value[0],
-      endDate: field.value[1],
+      startDate: field.value?.[0] || undefined,
+      endDate: field.value?.[1] || undefined,
       key: "selection",
     },
   ]);
@@ -61,8 +61,8 @@ export const DateRange: React.FC<DateRangeProps> = ({
   const reset = () => {
     setDateRange([
       {
-        startDate: null,
-        endDate: null,
+        startDate: undefined,
+        endDate: undefined,
         key: "selection",
       },
     ]);
