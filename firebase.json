@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "target": "lost-foun-service",
     "public": "dist",
     "ignore": [
       "firebase.json",
@@ -8,8 +9,8 @@
     ],
     "rewrites": [
       {
-        "source": "**",
-        "destination": "/index.html"
+        "source": "/api/**",
+        "function": "api"
       }
     ]
   }
