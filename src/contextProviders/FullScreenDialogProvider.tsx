@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState, type JSX } from "react";
+import React, { useContext, useState, type JSX } from "react";
 import Dialog from "@mui/material/Dialog";
 import Slide from "@mui/material/Slide";
 import { type TransitionProps } from "@mui/material/transitions";
+import { FullScreenDialogContext } from "../contexts/FullScreenDialogContext";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -11,22 +12,6 @@ const Transition = React.forwardRef(function Transition(
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-
-interface FullScreenDialogContextType {
-  openDialogFullScreen: boolean;
-  setOpenDialogFullScreen: (visible: boolean) => void;
-  setComponentRender?: (component: JSX.Element) => void;
-  dataRow?: DataItemType;
-  setDataRow: (dt?: DataItemType) => void;
-}
-
-interface DataItemType {
-  [key: string]: any;
-}
-
-const FullScreenDialogContext = createContext<
-  FullScreenDialogContextType | undefined
->(undefined);
 
 export const FullScreenDialogProvider: React.FC<{
   children: React.ReactNode;

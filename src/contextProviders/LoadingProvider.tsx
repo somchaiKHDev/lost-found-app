@@ -1,13 +1,7 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-
-interface LoadingContextType {
-  loading: boolean;
-  setLoading: (isLoad: boolean) => void;
-}
-
-const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
+import { LoadingContext } from "../contexts/LoadingContext";
 
 export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({
   children,

@@ -7,11 +7,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid2";
 import CardMedia from "@mui/material/CardMedia";
-import { useFullScreenDialogContext } from "../../contexts/FullScreenDialogContext";
 import { ItemStatusLabels } from "../../enums/itemStatusEnum";
 import { ItemTypeLabels } from "../../enums/itemTypeEnum";
 import { Item } from "../shared/PaperItem";
-import { useDialogContext } from "../../contexts/DialogContext";
 import { rederCampain } from "../Campain/Campain";
 import { rederCampainPreview } from "../CampainPreview/CampainPreview";
 import { ItemStatusLookups } from "../../hooks/lookup";
@@ -23,6 +21,8 @@ import { useEffect, useState } from "react";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
+import { useFullScreenDialogContext } from "../../contextProviders/FullScreenDialogProvider";
+import { useDialogContext } from "../../contextProviders/DialogProvider";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -36,23 +36,17 @@ export const DataPreview = () => {
   const dataItem = dataRow as DataItemInfo;
   const navigate = useNavigate();
 
-  useEffect(() => {
-    return () => {
-      if (isChangeStatus) {
-        navigate(0);
-      }
-    };
-  }, [isChangeStatus]);
-
   const handleCloseDialogFullScreen = () => {
-    document.activeElement instanceof HTMLElement &&
+    if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
+    }
     setOpenDialogFullScreen(false);
   };
 
   const handleOpenDialog = () => {
-    document.activeElement instanceof HTMLElement &&
+    if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
+    }
     setConfigDialog({
       visible: true,
       maxWidth: "md",
@@ -68,8 +62,9 @@ export const DataPreview = () => {
   };
 
   const handlePreviewCampain = () => {
-    document.activeElement instanceof HTMLElement &&
+    if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
+    }
     setConfigDialog({
       visible: true,
       maxWidth: "md",
@@ -111,8 +106,9 @@ export const DataPreview = () => {
 
   const actionConfirm = (key: string) => () => {
     let title = "";
-    document.activeElement instanceof HTMLElement &&
+    if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
+    }
     setConfigDialog({
       visible: true,
       maxWidth: "sm",
@@ -219,6 +215,14 @@ export const DataPreview = () => {
         setLoading(false);
       });
   };
+
+  useEffect(() => {
+    return () => {
+      if (isChangeStatus) {
+        navigate(0);
+      }
+    };
+  }, [isChangeStatus, navigate]);
 
   return (
     <>

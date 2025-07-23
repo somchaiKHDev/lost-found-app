@@ -8,11 +8,12 @@ import AddLostItem from "./pages/AddLostItem";
 import Layout from "./pages/Layout";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { SummaryItemProvider } from "./contexts/SummaryItemContext";
-import { LoadingProvider } from "./contexts/LoadingContext";
-import { FullScreenDialogProvider } from "./contexts/FullScreenDialogContext";
-import { DialogProvider } from "./contexts/DialogContext";
 import AppTest from "./pages/AppTest";
+import { LoadingProvider } from "./contextProviders/LoadingProvider";
+import { SummaryItemProvider } from "./contextProviders/SummaryItemProvider";
+import { DialogProvider } from "./contextProviders/DialogProvider";
+import { FullScreenDialogProvider } from "./contextProviders/FullScreenDialogProvider";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const App = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const App = () => {
   useEffect(() => {
     if (isLogined) {
       axios
-        .get(`api/auth/verify`, { withCredentials: true })
+        .get(`${apiUrl}/auth/verify`, { withCredentials: true })
         .then((response) => {
           window.localStorage.setItem(
             "isLogined",
@@ -40,17 +41,14 @@ const App = () => {
       window.localStorage.removeItem("isLogined");
       setIsLoading(false);
     }
-  }, [isLogined]);
+  }, [isLogined, navigate]);
 
   if (isLoading) return <div>Loading...</div>;
 
   return (
     <LoadingProvider>
       <Routes>
-        <Route
-          path="/test-api"
-          element={<AppTest />}
-        />
+        <Route path="/test-api" element={<AppTest />} />
         <Route
           path="/login"
           element={isLogined ? <Navigate to="/" /> : <Login />}

@@ -11,7 +11,7 @@ interface DataItemInfo {
   imageUrl: string;
   type: string;
   hasCampain: boolean;
-  [key: string]: any;
+  [key: string]: string | number | boolean;
 }
 
 interface SummaryItemInfo {
@@ -30,4 +30,8 @@ interface CampainInfo {
   datetime: string;
   create_by: string;
   imageUrl: string;
+}
+
+interface DataItemType {
+  [key: string]: string | number | boolean
 }

@@ -21,11 +21,11 @@ import { ItemTypeLabels, type ItemType } from "../enums/itemTypeEnum";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { useLoadingContext } from "../contexts/LoadingContext";
 import SearchIcon from "@mui/icons-material/Search";
-import { useFullScreenDialogContext } from "../contexts/FullScreenDialogContext";
 import { rederDataPreview } from "../components/DataPreview/DataPreview";
 import { ItemStatusLookups, ItemTypeLookups } from "../hooks/lookup";
+import { useLoadingContext } from "../contextProviders/LoadingProvider";
+import { useFullScreenDialogContext } from "../contextProviders/FullScreenDialogProvider";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -38,6 +38,7 @@ interface Column {
   label: string;
   minWidth?: number;
   align?: "right";
+  dataType: string;
   format?: (value: any) => string;
 }
 
@@ -46,22 +47,30 @@ const columns: readonly Column[] = [
     id: "type",
     label: "ประเภท",
     minWidth: 120,
+    dataType: "string",
     format: (value: ItemType) => {
       return ItemTypeLabels[value];
     },
   },
-  { id: "imageUrl", label: "รูปภาพ", minWidth: 100 },
-  { id: "description", label: "รายละเอียดสิ่งของ", minWidth: 170 },
+  { id: "imageUrl", label: "รูปภาพ", minWidth: 100, dataType: "string" },
+  {
+    id: "description",
+    label: "รายละเอียดสิ่งของ",
+    minWidth: 170,
+    dataType: "string",
+  },
   {
     id: "location",
     label: "สถานที่พบหรือคาดว่าหาย",
     minWidth: 170,
+    dataType: "string",
   },
   {
     id: "datetime",
     label: "วันที่ที่พบหรือหาย",
     minWidth: 170,
-    format: (value: any) => {
+    dataType: "string",
+    format: (value: string) => {
       return new Date(value).toLocaleDateString("th-TH", {
         year: "numeric",
         month: "long",
@@ -73,6 +82,7 @@ const columns: readonly Column[] = [
     id: "status",
     label: "สถานะ",
     minWidth: 100,
+    dataType: "string",
     format: (value: ItemStatus) => {
       return ItemStatusLabels[value];
     },
@@ -163,11 +173,29 @@ const Home = () => {
       });
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // const fetchData = () => {
+  //   setLoading(true);
+  //   axios
+  //     .get<DataItemInfo[]>(`${apiUrl}/all-item`, { withCredentials: true })
+  //     .then((res) => {
+  //       setRows(res.data);
+  //     })
+  //     .catch()
+  //     .finally(() => {
+  //       setLoading(false);
+  //     });
+  // };
 
-  const fetchData = () => {
+  const previewDataRow = (dataRow: DataItemInfo) => () => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    setComponentRender?.(rederDataPreview());
+    setDataRow(dataRow);
+    setOpenDialogFullScreen(true);
+  };
+
+  const fetchData = React.useCallback(() => {
     setLoading(true);
     axios
       .get<DataItemInfo[]>(`${apiUrl}/all-item`, { withCredentials: true })
@@ -178,15 +206,11 @@ const Home = () => {
       .finally(() => {
         setLoading(false);
       });
-  };
+  }, [setLoading, setRows]);
 
-  const previewDataRow = (dataRow: DataItemInfo) => () => {
-    document.activeElement instanceof HTMLElement &&
-      document.activeElement.blur();
-    setComponentRender?.(rederDataPreview());
-    setDataRow(dataRow);
-    setOpenDialogFullScreen(true);
-  };
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   return (
     <>
@@ -253,7 +277,7 @@ const Home = () => {
                 ค้นหา
               </Button>
             </div>
-          </div> 
+          </div>
         </form>
       </FormProvider>
 
@@ -307,9 +331,9 @@ const Home = () => {
                             {column.id === "imageUrl" ? (
                               <Box
                                 component="img"
-                                src={value}
+                                src={value as string}
                                 sx={{ width: 50 }}
-                              ></Box>
+                              />
                             ) : column?.format ? (
                               column?.format(value)
                             ) : (

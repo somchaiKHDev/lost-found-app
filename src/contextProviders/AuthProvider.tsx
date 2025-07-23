@@ -1,17 +1,8 @@
 import axios from "axios";
-import { createContext, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../contexts/AuthContext";
 
 const apiUrl = import.meta.env.VITE_API_URL;
-
-interface AuthContextProps {
-  user: any | null;
-  loading: boolean;
-}
-
-const AuthContext = createContext<AuthContextProps>({
-  user: null,
-  loading: true,
-});
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<any | null>(null);

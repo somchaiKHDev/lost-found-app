@@ -8,9 +8,9 @@ import { Autocomplete } from "../components/forms/Autocomplete";
 import { MuiDateTimeField } from "../components/forms/DateTimeField";
 import moment from "moment";
 import axios from "axios";
-import { useSummaryItemContext } from "../contexts/SummaryItemContext";
-import { useLoadingContext } from "../contexts/LoadingContext";
-import SaveIcon from '@mui/icons-material/Save';
+import SaveIcon from "@mui/icons-material/Save";
+import { useSummaryItemContext } from "../contextProviders/SummaryItemProvider";
+import { useLoadingContext } from "../contextProviders/LoadingProvider";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -63,24 +63,22 @@ const AddLostItem = () => {
   });
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    let params = {
+    const localStorage = window.localStorage.getItem("isLogined");
+    const jsonData = localStorage ? JSON.parse(localStorage) : {};
+
+    const params: AddLostFoundItemparam = {
       fullname: data.fullname,
       contact_phone: data.contact_phone,
       item_type:
-        typeof data.item_type === "object" ? data.item_type?.value : "",
+        typeof data.item_type === "object" ? data.item_type?.value || "" : "",
       description: data.description,
       location: data.location,
       datetime:
         data.date_lost instanceof Date ? data.date_lost.toISOString() : "",
       note: data.note,
-      create_by: "",
+      create_by: jsonData.uid || "",
     };
 
-    const localStorage = window.localStorage.getItem("isLogined");
-    if (localStorage) {
-      const jsonData = JSON.parse(localStorage);
-      params.create_by = jsonData.uid;
-    }
     setLoading(true);
     axios
       .post(`${apiUrl}/lost-items/add`, params, {
@@ -96,14 +94,19 @@ const AddLostItem = () => {
       .finally(() => {
         setLoading(false);
       });
-  }
+  };
 
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="flex justify-between mb-4">
           <span className="text-2xl font-medium">เพิ่มรายการของที่พบ</span>
-          <Button type="submit" variant="contained" color="warning" startIcon={<SaveIcon />}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="warning"
+            startIcon={<SaveIcon />}
+          >
             บันทึก
           </Button>
         </div>

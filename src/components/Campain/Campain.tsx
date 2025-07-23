@@ -3,7 +3,6 @@ import DialogContent from "@mui/material/DialogContent";
 import Grid from "@mui/material/Grid";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
-import { useDialogContext } from "../../contexts/DialogContext";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +12,7 @@ import axios from "axios";
 import { useState } from "react";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useDialogContext } from "../../contextProviders/DialogProvider";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -37,8 +37,9 @@ export const Campain: React.FC<CampainProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleCloseDialog = () => {
-    document.activeElement instanceof HTMLElement &&
+    if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
+    }
     setConfigDialog({
       visible: false,
     });
@@ -53,21 +54,18 @@ export const Campain: React.FC<CampainProps> = ({
   });
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    let params: AddCampainsParam = {
+    const localStorage = window.localStorage.getItem("isLogined");
+    const jsonData = localStorage ? JSON.parse(localStorage) : {};
+
+    const params: AddCampainsParam = {
       caseId: dataItem.id,
       subject: data.subject,
       description: data.description,
       datetime: new Date().toISOString(),
-      create_by: "",
+      create_by: jsonData.uid || "",
       imageUrl: dataItem.imageUrl,
       type: dataItem.type,
     };
-
-    const localStorage = window.localStorage.getItem("isLogined");
-    if (localStorage) {
-      const jsonData = JSON.parse(localStorage);
-      params.create_by = jsonData.uid;
-    }
 
     setLoading(true);
     axios

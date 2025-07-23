@@ -24,7 +24,7 @@ export const CampainPreview: React.FC<CampainPreviewProps> = ({ id }) => {
 
   useEffect(() => {
     fetchData(id);
-  }, []);
+  }, [id]);
 
   const fetchData = (id: string) => {
     setLoading(true);

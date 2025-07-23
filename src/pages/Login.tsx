@@ -11,10 +11,9 @@ import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useLoadingContext } from "../contexts/LoadingContext";
+import { useLoadingContext } from "../contextProviders/LoadingProvider";
 
 const apiUrl = import.meta.env.VITE_API_URL;
-
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -79,7 +78,7 @@ const Login = () => {
     setLoading(true);
     axios
       .post(
-        `api/signin`,
+        `${apiUrl}/signin`,
         { email, password },
         {
           withCredentials: true

@@ -11,10 +11,10 @@ import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import { useSummaryItemContext } from "../contexts/SummaryItemContext";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import clsx from "clsx";
-import { useLoadingContext } from "../contexts/LoadingContext";
+import { useSummaryItemContext } from "../contextProviders/SummaryItemProvider";
+import { useLoadingContext } from "../contextProviders/LoadingProvider";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -44,9 +44,13 @@ const Layout = () => {
   const { summaryItem, fetchSummaryItem } = useSummaryItemContext();
   const { setLoading } = useLoadingContext();
 
-  useEffect(() => {
+  const callbackSummaryItem = useCallback(() => {
     fetchSummaryItem();
-  }, []);
+  }, [fetchSummaryItem]);
+
+  useEffect(() => {
+    callbackSummaryItem();
+  }, [callbackSummaryItem]);
 
   const signOut = async () => {
     try {

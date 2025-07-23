@@ -10,9 +10,9 @@ import moment from "moment";
 import { FileUpload } from "../components/forms/FileUpload";
 import axios from "axios";
 import imageCompression from "browser-image-compression";
-import { useSummaryItemContext } from "../contexts/SummaryItemContext";
-import { useLoadingContext } from "../contexts/LoadingContext";
 import SaveIcon from "@mui/icons-material/Save";
+import { useSummaryItemContext } from "../contextProviders/SummaryItemProvider";
+import { useLoadingContext } from "../contextProviders/LoadingProvider";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 

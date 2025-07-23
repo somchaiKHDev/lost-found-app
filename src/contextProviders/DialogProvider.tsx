@@ -1,23 +1,8 @@
-import React, { createContext, useContext, useState, type JSX } from "react";
+import React, { useContext, useState, type JSX } from "react";
 import Dialog from "@mui/material/Dialog";
-import type { Breakpoint } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-
-interface DialogContextType {
-  openDialog: boolean;
-  setConfigDialog: (config: ConfigDialogType) => void;
-  setComponentRender?: (component: JSX.Element) => void;
-}
-
-interface ConfigDialogType {
-  visible?: boolean;
-  fullWidth?: boolean;
-  maxWidth?: false | Breakpoint;
-  scroll?: "body" | "paper";
-}
-
-const DialogContext = createContext<DialogContextType | undefined>(undefined);
+import { DialogContext, type ConfigDialogType } from "../contexts/DialogContext";
 
 export const DialogProvider: React.FC<{
   children: React.ReactNode;
