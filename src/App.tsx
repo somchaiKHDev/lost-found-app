@@ -12,8 +12,7 @@ import { SummaryItemProvider } from "./contexts/SummaryItemContext";
 import { LoadingProvider } from "./contexts/LoadingContext";
 import { FullScreenDialogProvider } from "./contexts/FullScreenDialogContext";
 import { DialogProvider } from "./contexts/DialogContext";
-
-const apiUrl = import.meta.env.VITE_API_URL;
+import AppTest from "./pages/AppTest";
 
 const App = () => {
   const navigate = useNavigate();
@@ -23,7 +22,7 @@ const App = () => {
   useEffect(() => {
     if (isLogined) {
       axios
-        .get(`${apiUrl}/auth/verify`, { withCredentials: true })
+        .get(`api/auth/verify`, { withCredentials: true })
         .then((response) => {
           window.localStorage.setItem(
             "isLogined",
@@ -48,6 +47,10 @@ const App = () => {
   return (
     <LoadingProvider>
       <Routes>
+        <Route
+          path="/test-api"
+          element={<AppTest />}
+        />
         <Route
           path="/login"
           element={isLogined ? <Navigate to="/" /> : <Login />}

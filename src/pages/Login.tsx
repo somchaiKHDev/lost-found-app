@@ -78,7 +78,13 @@ const Login = () => {
 
     setLoading(true);
     axios
-      .post(`${apiUrl}/signin`, { email, password }, { withCredentials: true })
+      .post(
+        `api/signin`,
+        { email, password },
+        {
+          withCredentials: true
+        }
+      )
       .then((response) => {
         console.log("signin response", response);
         window.localStorage.setItem("isLogined", JSON.stringify(response.data));
