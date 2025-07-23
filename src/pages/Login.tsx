@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useLoadingContext } from "../contextProviders/LoadingProvider";
 
-const apiUrl = import.meta.env.VITE_API_URL;
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -59,6 +58,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 const Login = () => {
   const navigate = useNavigate();
   const { setLoading } = useLoadingContext();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
