@@ -101,7 +101,6 @@ const AddFoundItem = () => {
     axios
       .post(`${apiUrl}/found-items/add`, formData, {
         withCredentials: true,
-        headers: { "Content-Type": "multipart/form-data" },
       })
       .then(() => {
         fetchSummaryItem();
