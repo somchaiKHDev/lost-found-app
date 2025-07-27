@@ -9,10 +9,10 @@ import { MuiDateTimeField } from "../components/forms/DateTimeField";
 import moment from "moment";
 import { FileUpload } from "../components/forms/FileUpload";
 import axios from "axios";
-import imageCompression from "browser-image-compression";
 import SaveIcon from "@mui/icons-material/Save";
 import { useSummaryItemContext } from "../contextProviders/SummaryItemProvider";
 import { useLoadingContext } from "../contextProviders/LoadingProvider";
+import { getImageCompression } from "../lib/utils";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -62,55 +62,56 @@ const AddFoundItem = () => {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const imageCompression =
+      typeof data.file_upload[0] === "object"
+        ? await getImageCompression(data.file_upload[0])
+        : "";
+
     const formData = new FormData();
-    formData.append(
-      "item_type",
-      typeof data.item_type === "object" ? data?.item_type?.value || "" : ""
-    );
-    formData.append("description", data.description);
-    formData.append("location", data.location_found);
-    formData.append(
-      "datetime",
-      data.found_date_time instanceof Date
-        ? data.found_date_time.toISOString()
-        : ""
-    );
-    formData.append("found_by", data.found_by);
-    formData.append("note", data.note);
-
-    const localStorage = window.localStorage.getItem("isLogined");
-    if (localStorage) {
-      const jsonData = JSON.parse(localStorage);
-      formData.append("create_by", jsonData.uid);
-    }
-
-    if (typeof data.file_upload[0] === "object") {
-      const options = {
-        maxSizeMB: 1,
-        maxWidthOrHeight: 800,
-        useWebWorker: true,
-      };
-      const compressedFile = await imageCompression(
-        data.file_upload[0],
-        options
-      );
-      formData.append("file", compressedFile);
-    }
+    formData.append("file", imageCompression);
 
     setLoading(true);
     axios
-      .post(`${apiUrl}/found-items/add`, formData, {
+      .post(`${apiUrl}/upload-file`, formData, {
         withCredentials: true,
       })
-      .then(() => {
-        fetchSummaryItem();
-        form.reset();
+      .then((res) => {
+        const localStorage = window.localStorage.getItem("isLogined");
+        const jsonData = localStorage ? JSON.parse(localStorage) : {};
+
+        if (res.data?.url) {
+          const params = {
+            item_type: data.item_type?.value,
+            description: data.description,
+            location: data.location_found,
+            datetime:
+              data.found_date_time instanceof Date
+                ? data.found_date_time.toISOString()
+                : "",
+            found_by: data.found_by,
+            note: data.note,
+            create_by: jsonData.uid || "",
+            imageUrl: res.data.url,
+          };
+
+          axios
+            .post(`${apiUrl}/found-items/add`, params, {
+              withCredentials: true,
+            })
+            .then(() => {
+              form.reset();
+              fetchSummaryItem();
+            })
+            .catch((error) => {
+              console.error("Add found-items failed:", error);
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+        }
       })
       .catch((error) => {
         console.error("Add found-items failed:", error);
-      })
-      .finally(() => {
-        setLoading(false);
       });
   }
 

@@ -16,7 +16,7 @@ export const FileUpload: React.FC<TextFieldProps> = ({ name }) => {
   } = useController({ name, control });
 
   useEffect(() => {
-    if (!value) {
+    if (value.length === 0) {
       setPreviewUrl(null);
     }
   }, [value]);
